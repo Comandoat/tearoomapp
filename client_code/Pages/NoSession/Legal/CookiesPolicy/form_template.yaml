@@ -1,0 +1,18 @@
+components:
+- event_bindings: {click: back_home_button_click}
+  layout_properties: {grid_position: 'FKGPPG,JFUELQ'}
+  name: back_home_button
+  properties: {background: '', bold: true, foreground: '', text: BACK TO HOME PAGE}
+  type: Button
+- layout_properties: {grid_position: 'JAHBCM,FRUGBQ'}
+  name: cookies_policy_rich_text
+  properties:
+    background: ''
+    content: "# Cookies Policy\n\n_Last updated: April 11, 2025_\n\nThis Cookies Policy explains how **TeaRoom** uses cookies and similar technologies on our website and mobile application. By using our services, you agree to our use of cookies in accordance with this policy.\n\n## 1. What Are Cookies?\n\nCookies are small text files stored on your device (computer, tablet, or smartphone) when you visit a website. They help improve user experience by remembering preferences and usage patterns.\n\n## 2. Types of Cookies We Use\n\n### a. Essential Cookies\n\nThese cookies are necessary for the website to function properly. They enable:\n\n- User authentication\n- Session maintenance\n- Navigation across pages\n\nWithout these cookies, some parts of the site may not function.\n\n### b. Functional Cookies\n\nThese cookies enhance usability and personalize your experience:\n\n- Remembering your preferences (e.g. language or location)\n- Displaying personalized content\n\n### c. Analytics Cookies\n\nWe use analytics tools (e.g. Google Analytics or Anvil’s internal tools) to collect information about how users interact with our app. This helps us:\n\n- Understand usage patterns\n- Improve performance and content\n\nAll data is anonymized and used for internal purposes only.\n\n## 3. Third-Party Cookies\n\nSome third-party services used by TeaRoom may also set cookies, such as:\n\n- Embedded media (e.g. YouTube)\n- Analytics providers\n\nThese third parties are responsible for their own cookie policies.\n\n## 4. Cookie Consent\n\nOn your first visit, a cookie banner will request your consent to store cookies on your device (except essential cookies which do not require consent).\n\nYou can change your cookie preferences at any time via your browser settings.\n\n## 5. How to Control Cookies\n\nYou can manage or delete cookies by adjusting your browser settings:\n\n- Block all cookies\n- Allow cookies on specific websites\n- Delete existing cookies\n\nPlease note: disabling cookies may affect the functionality of the site.\n\n## 6. Changes to This Policy\n\nWe may update this Cookies Policy periodically. Changes will be posted on this page with an updated revision date.\n\n## 7. Contact\n\nIf you have any questions about our use of cookies, please contact:\n\n**TeaRoom SAS**  \nEmail: contact@tearoom.app"
+    font_size: 18
+    foreground: ''
+    spacing:
+      padding: [null, '20', null, '20']
+  type: RichText
+container: {type: ColumnPanel}
+is_package: true

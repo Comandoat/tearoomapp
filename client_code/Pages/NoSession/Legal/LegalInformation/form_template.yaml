@@ -1,0 +1,19 @@
+components:
+- event_bindings: {click: back_home_button_click}
+  layout_properties: {grid_position: 'QLGSEG,XXFWUW'}
+  name: back_home_button
+  properties: {background: '', bold: true, foreground: '', text: BACK TO HOME PAGE}
+  type: Button
+- layout_properties: {full_width_row: false, grid_position: 'TYZWZK,KOTNMR'}
+  name: legal_notice_rich_text
+  properties:
+    background: ''
+    content: "# Legal Notice\n\n**Company Name:** TeaRoom SAS  \n**Headquarters:** 123 Rue des Infusions, 75000 Paris, France  \n**Company Registration Number:** RCS Paris 123 456 789  \n**VAT Number:** FR12 345678901  \n\n**Director of Publication:** Boris Rose \n**Contact Email:** borisrose@tearoom.app  \n\n**Hosting Provider:**  \nAnvil Ltd.  \n20 Cambridge Street, Cambridge, UK  \nWebsite: https://anvil.works  \n"
+    enable_slots: true
+    font_size: 18
+    foreground: ''
+    spacing:
+      padding: [null, '20', null, '20']
+  type: RichText
+container: {type: ColumnPanel}
+is_package: true

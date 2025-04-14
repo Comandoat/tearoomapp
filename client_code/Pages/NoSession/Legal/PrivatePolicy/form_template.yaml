@@ -1,0 +1,18 @@
+components:
+- event_bindings: {click: back_home_button_click}
+  layout_properties: {grid_position: 'MMJQDO,FTBGSV'}
+  name: back_home_button
+  properties: {background: '', bold: true, foreground: '', text: BACK TO HOME PAGE}
+  type: Button
+- layout_properties: {grid_position: 'UERLLV,LJNYFJ'}
+  name: rich_text_1
+  properties:
+    background: theme:My Primary Color
+    content: "# Privacy Policy\n\n_Last updated: April 11, 2025_\n\nAt **TeaRoom**, we are committed to protecting your personal data and respecting your privacy. This Privacy Policy explains what information we collect, how we use it, and your rights regarding your data.\n\n## 1. Data Controller\n\n**TeaRoom SAS**  \n123 Rue des Infusions, 75000 Paris, France  \nEmail: borisrose@tearoom.app\n\n## 2. What Information We Collect\n\nWe collect and process the following data when you use our application:\n\n- Full name\n- Email address\n- Profile photo (optional)\n- Hashed password (we never store passwords in plain text)\n- Reservation and order history\n- Technical data (IP address, browser type, etc.)\n\n## 3. How We Use Your Information\n\nWe use your information to:\n\n- Create and manage your user account\n- Process table reservations and food orders\n- Send service-related communications (confirmations, reminders, etc.)\n- Improve our platform and services\n- Ensure security and prevent fraud\n\n## 4. Legal Basis for Processing\n\nWe process your data based on:\n\n- Your **consent** (when you register)\n- The **performance of a contract** (to provide our services)\n- **Legal obligations** (e.g. accounting or fraud prevention)\n\n## 5. Data Storage and Security\n\nYour data is stored securely on servers hosted by our trusted providers.\n\n- Passwords are hashed using secure algorithms (e.g., bcrypt or Argon2)\n- Access to your personal data is restricted to authorized personnel only\n- Regular backups and security audits are performed\n\n## 6. Data Sharing\n\nWe do **not** sell or rent your personal information.  \nWe only share data with third parties when:\n\n- It is required to provide the service (e.g., hosting, email)\n- It is required by law or legal procedures\n\n## 7. Cookies and Tracking\n\nWe may use cookies to:\n\n- Maintain session state\n- Analyze usage patterns to improve our services\n\nYou may disable cookies in your browser settings, but some features may not work properly.\n\n## 8. Your Rights (GDPR)\n\nIf you are located in the European Union, you have the right to:\n\n- Access your personal data\n- Correct or update your data\n- Request deletion of your data\n- Withdraw your consent at any time\n- Lodge a complaint with a data protection authority\n\nTo exercise your rights, please contact us at: contact@tearoom.app\n\n## 9. Data Retention\n\nWe retain your personal data for as long as your account is active, and as required to fulfill legal obligations.\n\n## 10. Updates to This Policy\n\nWe may update this Privacy Policy from time to time. Changes will be posted on this page with an updated date.\n\n## 11. Contact\n\nFor any questions or concerns about this Privacy Policy, please contact:\n\n**TeaRoom SAS**  \nEmail: contact@tearoom.app\n"
+    font_size: 18
+    foreground: ''
+    spacing:
+      padding: [null, '20', null, '20']
+  type: RichText
+container: {type: ColumnPanel}
+is_package: true

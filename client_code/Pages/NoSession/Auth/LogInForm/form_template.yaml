@@ -1,0 +1,16 @@
+components:
+- components:
+  - layout_properties: {grid_position: 'TMSVBO,MJYXXZ'}
+    name: credentials_fields_1
+    properties: {}
+    type: form:Components.CredentialsFields
+  - layout_properties: {grid_position: 'AELHWM,NPIPCI'}
+    name: form_buttons_1
+    properties: {}
+    type: form:Components.FormButtons
+  layout_properties: {grid_position: 'AKFPOE,PEMZGF'}
+  name: log_in_form_column_panel
+  properties: {}
+  type: ColumnPanel
+container: {type: ColumnPanel}
+is_package: true

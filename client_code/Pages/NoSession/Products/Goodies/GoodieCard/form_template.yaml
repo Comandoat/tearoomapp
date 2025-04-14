@@ -1,0 +1,39 @@
+components:
+- components:
+  - data_bindings:
+    - {code: 'self.item[''image'']', property: source, writeback: false}
+    layout_properties: {width: 266.515625}
+    name: goodie_image
+    properties: {display_mode: fill_width, height: 177.7734375}
+    type: Image
+  - components:
+    - data_bindings:
+      - {code: 'self.item[''name'']', property: text, writeback: false}
+      name: goodie_name
+      properties: {}
+      type: Label
+    - data_bindings:
+      - {code: 'self.item[''description'']', property: text, writeback: false}
+      name: goodie_description
+      properties: {}
+      type: Label
+    - data_bindings:
+      - {code: 'self.item[''price'']', property: text, writeback: false}
+      layout_properties: {}
+      name: goodie_price
+      properties: {align: right}
+      type: Label
+    - layout_properties: {}
+      name: add_to_cart_button
+      properties: {text: ADD TO CART}
+      type: Button
+    layout_properties: {width: 458.9375}
+    name: tea_card_info_linear_panel
+    properties: {}
+    type: LinearPanel
+  layout_properties: {grid_position: 'YXFAOX,YGAKNR'}
+  name: goodie_card_flow_panel
+  properties: {}
+  type: FlowPanel
+container: {type: ColumnPanel}
+is_package: true

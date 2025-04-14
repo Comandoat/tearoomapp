@@ -1,0 +1,7 @@
+components:
+- layout_properties: {grid_position: 'PORHDX,OOMRGN'}
+  name: teas_repeating_panel
+  properties: {item_template: Pages.NoSession.Products.Teas.TeaCard}
+  type: RepeatingPanel
+container: {type: ColumnPanel}
+is_package: true

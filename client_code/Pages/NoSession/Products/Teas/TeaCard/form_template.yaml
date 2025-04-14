@@ -1,0 +1,41 @@
+components:
+- components:
+  - data_bindings:
+    - {code: 'self.item[''image'']', property: source, writeback: false}
+    layout_properties: {width: 266.515625}
+    name: tea_image
+    properties: {display_mode: fill_width}
+    type: Image
+  - components:
+    - data_bindings:
+      - {code: 'self.item[''name'']', property: text, writeback: false}
+      layout_properties: {}
+      name: tea_name
+      properties: {icon: ''}
+      type: Label
+    - data_bindings:
+      - {code: 'self.item[''description'']', property: text, writeback: false}
+      layout_properties: {}
+      name: tea_description
+      properties: {icon: ''}
+      type: Label
+    - data_bindings:
+      - {code: 'self.item[''price'']', property: text, writeback: false}
+      layout_properties: {}
+      name: tea_price
+      properties: {align: right}
+      type: Label
+    - layout_properties: {}
+      name: add_to_cart_button
+      properties: {icon: 'fa:cart-arrow-down', text: ADD TO CART}
+      type: Button
+    layout_properties: {width: 458.9375}
+    name: tea_card_info_linear_panel
+    properties: {}
+    type: LinearPanel
+  layout_properties: {grid_position: 'SWWZPN,EEYLRA'}
+  name: tea_card_flow_panel
+  properties: {}
+  type: FlowPanel
+container: {type: ColumnPanel}
+is_package: true

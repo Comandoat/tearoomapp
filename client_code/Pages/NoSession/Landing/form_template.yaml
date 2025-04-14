@@ -1,0 +1,106 @@
+components:
+- layout_properties: {grid_position: 'NTYLAO,LMLLKF'}
+  name: usp_label
+  properties: {align: center, bold: false, font: cambria, font_size: 18, icon: 'fa:shopping-bag', italic: false, text: 'Hi Friends welcome on Tea Room App , the #1 place to order the best teas from Paris'}
+  type: Label
+- layout_properties: {grid_position: 'JYUBWM,JLYCTA'}
+  name: landing_inside_image
+  properties: {display_mode: zoom_to_fill, height: 287, source: _/theme/inside-tearoom.webp}
+  type: Image
+- components:
+  - layout_properties: {col_xs: 0, row: KYKQYQ, width_xs: 12}
+    name: landing_label
+    properties: {align: center, bold: true, font: cambria, font_size: 20, foreground: '', icon: '', italic: false, role: title, text: ANNOUNCEMENT, underline: false}
+    type: Label
+  layout_properties: {grid_position: 'JYUBWM,YVAURG USUMRC,RWOQMN'}
+  name: grid_panel_2
+  properties: {}
+  type: GridPanel
+- layout_properties: {grid_position: 'JYUBWM,YVAURG VLDVVO,IQSGVZ'}
+  name: promo_rich_text
+  properties:
+    align: center
+    background: ''
+    content: |+
+      **20%** off online.
+       Do not hesitate to book a table or pass an order right here. Sign up or in right below to enjoy it.
+
+
+    font: cambria
+    font_size: 20
+    foreground: ''
+  type: RichText
+- layout_properties: {grid_position: 'JYUBWM,YVAURG ADZVDR,EWEYDK'}
+  name: landing_spacer
+  properties: {height: '20'}
+  type: Spacer
+- data_bindings: []
+  event_bindings: {click: button_sign_up_click}
+  layout_properties: {grid_position: 'JYUBWM,YVAURG VGCGXV,PSBUKQ'}
+  name: button_sign_up
+  properties:
+    background: theme:My Primary Color
+    bold: true
+    font: ''
+    foreground: ''
+    icon: ''
+    role: elevated-button
+    spacing:
+      padding: [null, 24, null, null]
+    text: SIGN UP
+  type: Button
+- data_bindings: []
+  event_bindings: {click: button_sign_in_click}
+  layout_properties: {grid_position: 'JYUBWM,YVAURG VGCGXV,OFOPIE'}
+  name: button_sign_in
+  properties:
+    background: theme:My Primary Color
+    bold: true
+    font: ''
+    foreground: ''
+    icon: ''
+    role: elevated-button
+    spacing:
+      padding: [null, 24, null, null]
+    text: SIGN IN
+  type: Button
+- layout_properties: {grid_position: 'HADKVR,MZXILU'}
+  name: teas_label
+  properties: {align: center, bold: false, font: camrbia, font_size: 18, italic: false, text: 'Dedecated to making you taste the best teas in Paris, we do our uttermost to make our signature teas unique'}
+  type: Label
+- components:
+  - name: landing_teas_carousel_flow_panel
+    properties: {}
+    type: FlowPanel
+  - layout_properties: {}
+    name: landing_teas_button_spacer
+    properties: {height: '40'}
+    type: Spacer
+  - event_bindings: {click: teas_list_button_click}
+    layout_properties: {}
+    name: teas_list_button
+    properties: {background: '', bold: true, foreground: '', icon: 'fa:list', role: elevated-button, text: DISCOVER OUR FULL LIST OF TEAS}
+    type: Button
+  - name: landing_goodies_list_spacer
+    properties: {height: 32}
+    type: Spacer
+  - name: landing_goodies_carousel_flow_panel
+    properties: {}
+    type: FlowPanel
+  - name: landing_goodies_button_spacer
+    properties: {height: 32}
+    type: Spacer
+  - layout_properties: {}
+    name: goodies_list_button
+    properties: {bold: true, icon: 'fa:list', role: elevated-button, text: DISCOVER OUR FULL LIST OF GOODIES}
+    type: Button
+  - layout_properties: {}
+    name: landing_footer_spacer
+    properties: {height: '50'}
+    type: Spacer
+  layout_properties: {grid_position: 'DUOHTO,BIYNFJ'}
+  name: landing_linear_panel
+  properties: {}
+  type: LinearPanel
+container: {type: ColumnPanel}
+is_package: true

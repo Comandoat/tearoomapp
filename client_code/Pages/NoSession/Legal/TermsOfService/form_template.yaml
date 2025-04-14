@@ -1,0 +1,59 @@
+components:
+- data_bindings: []
+  event_bindings: {click: back_home_button_click}
+  layout_properties: {full_width_row: false, grid_position: 'SZPMEL,UPDVTN'}
+  name: back_home_button
+  properties: {background: '', bold: true, foreground: '', text: BACK TO HOME PAGE}
+  type: Button
+- layout_properties: {grid_position: 'QEJOTR,EEDSUC'}
+  name: rich_text_1
+  properties:
+    background: theme:My Primary Color
+    content: |
+      # Terms and Conditions
+
+      Welcome to TeaRoom!
+
+      By using our website and mobile application, you agree to be bound by the following terms:
+
+      ## 1. Services
+
+      TeaRoom allows registered users to:
+      - Reserve tables in participating tea rooms.
+      - Order food and drinks online.
+
+      ## 2. User Accounts
+
+      To use our services, you must register and provide accurate personal information (full name, email, etc.). You are responsible for maintaining the confidentiality of your login credentials.
+
+      Passwords are stored in hashed form and never in plain text.
+
+      ## 3. Data Usage
+
+      We collect and store personal data as outlined in our [Privacy Policy], including:
+      - Full name
+      - Email address
+      - Profile picture
+      - Hashed password
+
+      We do not share your personal data with third parties except as required by law.
+
+      ## 4. Reservation and Orders
+
+      All reservations and food orders are subject to availability. TeaRoom reserves the right to cancel or modify bookings.
+
+      ## 5. Termination
+
+      We reserve the right to suspend or terminate user accounts for violation of these terms.
+
+      ## 6. Contact
+
+      For any questions, contact us at: contact@tearoom.app
+    font: ''
+    font_size: 18
+    foreground: ''
+    spacing:
+      padding: [null, '20', null, '20']
+  type: RichText
+container: {type: ColumnPanel}
+is_package: true

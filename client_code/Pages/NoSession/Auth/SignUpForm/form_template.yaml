@@ -1,0 +1,26 @@
+components:
+- layout_properties: {grid_position: 'KNAUUB,PNQZFX'}
+  name: name_fields
+  properties: {}
+  type: form:Components.NameFields
+- components:
+  - layout_properties: {grid_position: 'DPSJYF,QVUYRR'}
+    name: credentials_fields
+    properties: {}
+    type: form:Components.CredentialsFields
+  - layout_properties: {grid_position: 'XQESBX,SHCTVG'}
+    name: confirmed_password_field
+    properties: {background: 'theme:My Primary Color', foreground: 'theme:On Surface', placeholder: Confirm the password}
+    type: TextBox
+  - layout_properties: {grid_position: 'FLOQNV,IZJPSS'}
+    name: sign_up_form_buttons
+    properties: {}
+    type: form:Components.FormButtons
+  layout_properties: {grid_position: 'YUFUXY,RXFQVN'}
+  name: sign_up_form_column_panel
+  properties: {}
+  type: ColumnPanel
+container:
+  properties: {role: custom-wide}
+  type: ColumnPanel
+is_package: true

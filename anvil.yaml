@@ -1,0 +1,242 @@
+allow_embedding: false
+correct_dependency_ids: {dep_xgsbaz57ah7c7h: C6ZZPAPN4YYF5NVJ}
+db_schema:
+  bookings:
+    client: none
+    columns:
+    - admin_ui: {order: 1, width: 200}
+      name: created_at
+      type: datetime
+    - admin_ui: {order: 2, width: 200}
+      name: updated_at
+      type: datetime
+    - admin_ui: {order: 3, width: 200}
+      name: table
+      target: tables
+      type: link_single
+    - admin_ui: {order: 4, width: 200}
+      name: date
+      type: datetime
+    - admin_ui: {order: 5, width: 200}
+      name: is_past
+      type: bool
+    - admin_ui: {order: 4.5, width: 200}
+      name: is_confirmed
+      type: bool
+    server: full
+    title: bookings
+  carts:
+    client: none
+    columns:
+    - admin_ui: {order: 2, width: 200}
+      name: content
+      type: simpleObject
+    - admin_ui: {order: 3, width: 200}
+      name: total_amount
+      type: number
+    - admin_ui: {order: 4, width: 200}
+      name: created_at
+      type: datetime
+    - admin_ui: {order: 5, width: 200}
+      name: update_at
+      type: datetime
+    - admin_ui: {order: 6, width: 200}
+      name: user_id
+      type: string
+    server: full
+    title: carts
+  goodies:
+    client: none
+    columns:
+    - admin_ui: {order: 1, width: 200}
+      name: created_at
+      type: datetime
+    - admin_ui: {order: 2, width: 200}
+      name: updated_at
+      type: datetime
+    - admin_ui: {order: 0.5, width: 200}
+      name: name
+      type: string
+    - admin_ui: {order: 0.75, width: 200}
+      name: description
+      type: string
+    - admin_ui: {order: 0.875, width: 200}
+      name: quantity
+      type: number
+    - admin_ui: {order: 0.8125, width: 200}
+      name: is_available
+      type: bool
+    - admin_ui: {order: 0.9375, width: 200}
+      name: image
+      type: media
+    - admin_ui: {order: 3, width: 200}
+      name: price
+      type: number
+    server: full
+    title: goodies
+  goodies_stats:
+    client: none
+    columns:
+    - admin_ui: {order: 0, width: 200}
+      name: goodie_name
+      type: string
+    - admin_ui: {order: 1, width: 200}
+      name: generated_income
+      type: number
+    - admin_ui: {order: 2, width: 200}
+      name: sells_count
+      type: number
+    - admin_ui: {order: 3, width: 200}
+      name: created_at
+      type: datetime
+    - admin_ui: {order: 4, width: 200}
+      name: updated_at
+      type: datetime
+    server: full
+    title: goodies_stats
+  orders:
+    client: none
+    columns:
+    - admin_ui: {order: 1, width: 200}
+      name: user_id
+      type: number
+    - admin_ui: {order: 2, width: 200}
+      name: created_at
+      type: datetime
+    - admin_ui: {order: 3, width: 200}
+      name: is_done
+      type: bool
+    - admin_ui: {order: 4, width: 200}
+      name: content
+      type: simpleObject
+    server: full
+    title: orders
+  tables:
+    client: none
+    columns:
+    - admin_ui: {order: 1, width: 200}
+      name: chairs_count
+      type: number
+    - admin_ui: {order: 2, width: 200}
+      name: is_available
+      type: bool
+    - admin_ui: {order: 0.5, width: 200}
+      name: name
+      type: string
+    server: full
+    title: tables
+  teas:
+    client: none
+    columns:
+    - admin_ui: {order: 1, width: 200}
+      name: name
+      type: string
+    - admin_ui: {order: 2, width: 200}
+      name: price
+      type: number
+    - admin_ui: {order: 3, width: 200}
+      name: image
+      type: media
+    - admin_ui: {order: 4, width: 200}
+      name: description
+      type: string
+    - admin_ui: {order: 5, width: 200}
+      name: is_available
+      type: bool
+    server: full
+    title: teas
+  teas_stats:
+    client: none
+    columns:
+    - admin_ui: {order: 1, width: 200}
+      name: tea_name
+      type: string
+    - admin_ui: {order: 2, width: 200}
+      name: generated_income
+      type: number
+    - admin_ui: {order: 3, width: 200}
+      name: sells_count
+      type: number
+    - admin_ui: {order: 4, width: 200}
+      name: created_at
+      type: datetime
+    - admin_ui: {order: 5, width: 200}
+      name: updated_at
+      type: date
+    server: full
+    title: teas_stats
+  users:
+    client: none
+    columns:
+    - admin_ui: {order: 1, width: 200}
+      name: firstname
+      type: string
+    - admin_ui: {order: 2, width: 200}
+      name: lastname
+      type: string
+    - admin_ui: {order: 3, width: 200}
+      name: email
+      type: string
+    - admin_ui: {order: 4, width: 200}
+      name: password
+      type: string
+    - admin_ui: {order: 5, width: 200}
+      name: photo
+      type: media
+    - admin_ui: {order: 6, width: 200}
+      name: created_at
+      type: datetime
+    - admin_ui: {order: 7, width: 200}
+      name: updated_at
+      type: datetime
+    - admin_ui: {order: 4.5, width: 200}
+      name: is_admin
+      type: bool
+    server: full
+    title: users
+  users_stats:
+    client: none
+    columns:
+    - admin_ui: {order: 1, width: 200}
+      name: user_email
+      type: string
+    - admin_ui: {order: 2, width: 200}
+      name: created_at
+      type: datetime
+    - admin_ui: {order: 3, width: 200}
+      name: updated_at
+      type: datetime
+    - admin_ui: {order: 0.125, width: 200}
+      name: generated_income
+      type: number
+    - admin_ui: {order: 0.25, width: 200}
+      name: bookings_generated_income
+      type: number
+    - admin_ui: {order: 0.375, width: 200}
+      name: orders_generated_income
+      type: number
+    - admin_ui: {order: 1.5, width: 200}
+      name: is_deleted
+      type: bool
+    server: full
+    title: users_stats
+dependencies:
+- dep_id: dep_xgsbaz57ah7c7h
+  resolution_hints: {app_id: C6ZZPAPN4YYF5NVJ, name: Anvil Extras, package_name: anvil_extras}
+  version: {version_tag: v3.1.0}
+metadata: {description: An app for those who like tea, logo_img: 'asset:logo-tearoom-simple-logo.png', title: TeaRoom}
+name: Clone of TeaRoom
+native_deps: {head_html: ''}
+package_name: TeaRoomApp
+renamed: true
+runtime_options:
+  client_version: '3'
+  server_spec: {base: python310-minimal}
+  server_version: python3-sandbox
+  version: 2
+services:
+- client_config: {}
+  server_config: {}
+  source: /runtime/services/tables.yml
+startup: {module: MainForm, type: form}
+startup_form: null

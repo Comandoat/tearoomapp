@@ -1,0 +1,29 @@
+components:
+- layout_properties: {slot: default}
+  name: content_panel
+  properties: {}
+  type: ColumnPanel
+- layout_properties: {slot: nav-right}
+  name: navbar_links
+  properties: {}
+  type: FlowPanel
+- layout_properties: {slot: title}
+  name: dashbard_label
+  properties: {text: Dashboard}
+  type: Label
+- components:
+  - layout_properties: {}
+    name: cart_link
+    properties: {text: Cart}
+    type: Link
+  - name: orders_link
+    properties: {}
+    type: Link
+  layout_properties: {slot: left-nav}
+  name: linear_panel_1
+  properties: {}
+  type: LinearPanel
+container:
+  properties: {html: '@theme:standard-page.html'}
+  type: HtmlTemplate
+is_package: true

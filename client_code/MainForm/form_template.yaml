@@ -1,0 +1,88 @@
+components:
+- components:
+  - event_bindings: {click: landing_link_click}
+    layout_properties: {expand: true}
+    name: landing_link
+    properties: {bold: true, font_size: null, text: TEA ROOM}
+    type: Link
+  - event_bindings: {click: teas_link_click}
+    layout_properties: {}
+    name: teas_link
+    properties:
+      align: center
+      bold: true
+      font: cambria
+      font_size: 16
+      icon: fa:glass
+      spacing:
+        padding: [null, '5', null, '5']
+      text: TEAS
+    type: Link
+  - event_bindings: {click: goodies_link_click}
+    layout_properties: {}
+    name: goodies_link
+    properties:
+      bold: true
+      font: cambria
+      font_size: 16
+      icon: fa:spoon
+      icon_align: left
+      spacing:
+        padding: [null, '5', null, '5']
+      text: GOODIES
+    type: Link
+  - event_bindings: {click: login_link_click}
+    layout_properties: {}
+    name: login_link
+    properties:
+      bold: true
+      font: cambria
+      font_size: 16
+      icon: fa:sign-in
+      spacing:
+        margin: [null, '0', null, '20']
+        padding: [null, '5', null, '5']
+      text: LOGIN
+      underline: false
+    type: Link
+  layout_properties: {grid_position: 'HCAUKA,RUJORO'}
+  name: nav_flow_panel
+  properties: {align: right}
+  type: FlowPanel
+- layout_properties: {grid_position: 'SQRNET,BYHXWX'}
+  name: content_panel
+  properties: {}
+  type: ColumnPanel
+- layout_properties: {grid_position: 'ANKRKD,NCVEMW'}
+  name: footer_spacer
+  properties: {height: '100'}
+  type: Spacer
+- components:
+  - event_bindings: {click: terms_of_service_button_click}
+    layout_properties: {}
+    name: terms_of_service_button
+    properties: {background: '', foreground: '', icon: 'fa:book', text: TERMS OF SERVICE}
+    type: Button
+  - event_bindings: {click: legal_information_button_click}
+    layout_properties: {}
+    name: legal_information_button
+    properties: {background: '', foreground: '', icon: 'fa:legal', text: LEGAL INFORMATION}
+    type: Button
+  - event_bindings: {click: private_policy_button_click}
+    layout_properties: {}
+    name: private_policy_button
+    properties: {background: '', foreground: '', icon: 'fa:lock', text: PRIVATE POLICY}
+    type: Button
+  - event_bindings: {click: cookies_policy_button_click}
+    layout_properties: {}
+    name: cookies_policy_button
+    properties: {background: '', foreground: '', icon: 'fa:lock', text: COOKIES POLICY}
+    type: Button
+  layout_properties: {grid_position: 'NRWDYP,YSOPGV'}
+  name: footer_flow_panel
+  properties: {align: justify}
+  type: FlowPanel
+container:
+  properties: {background: ''}
+  type: ColumnPanel
+is_package: true
