@@ -211,32 +211,29 @@ db_schema:
       name: flag
       type: string
     - admin_ui: {order: 15, width: 200}
-      name: Password_Last_Changed
+      name: password_last_changed
       type: datetime
     - admin_ui: {order: 16, width: 200}
-      name: Two_Factor_Enabled
+      name: two_factor_enabled
       type: bool
     - admin_ui: {order: 17, width: 200}
-      name: Two_Factor_Secret
+      name: two_factor_secret
       type: string
     - admin_ui: {order: 18, width: 200}
-      name: Recovery_Codes
+      name: recovery_codes
       type: string
     - admin_ui: {order: 19, width: 200}
-      name: Last_Login
+      name: last_login
       type: datetime
     - admin_ui: {order: 20, width: 200}
-      name: Last_Known_IP
+      name: last_known_ip
       type: string
     - admin_ui: {order: 21, width: 200}
-      name: Account_Locked
+      name: account_locked
       type: bool
     - admin_ui: {order: 22, width: 200}
-      name: Email_Verified
-      type: bool
-    - admin_ui: {order: 23, width: 200}
-      name: peofile_picture
-      type: media
+      name: phone_number
+      type: string
     server: full
     title: users
   users_stats:

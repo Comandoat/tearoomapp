@@ -12,12 +12,15 @@ class SignUpForm(SignUpFormTemplate):
     self.init_components(**properties)
     self.sign_up_form_buttons.submit_button.add_event_handler('click', self.submit_click)
 
-  def submit_click(self):
+  def submit_click(self, **event_args):
     firstname = self.name_fields.firstname_field.text 
     lastname = self.name_fields.lastname_field.text
     email = self.credentials_fields.email_field.text
+    phone_number = self.phone_number.text
+    username = self.username_field.text
     password = self.credentials_fields.password_field.text
     confirmed_password = self.confirmed_password_field.text 
+    
 
     if not firstname or not lastname or not email or not password or not confirmed_password:
       Notification("Every field must be filled", style="danger").show()
@@ -28,7 +31,7 @@ class SignUpForm(SignUpFormTemplate):
       return  
 
     try:
-      response = anvil.server.call('add_user', firstname, lastname, email, password)
+      response = anvil.server.call('add_user', firstname, lastname, phone_number, username, email, password)
       Notification(response, style="success").show()
 
       self.name_fields.firstname_field.text = ""
@@ -36,6 +39,8 @@ class SignUpForm(SignUpFormTemplate):
       self.credentials_fields.email_field.text = ""
       self.credentials_fields.password_field.text = ""
       self.confirmed_password_field.text = ""
+      self.phone_number.text = ""
+      self.username_field.text = ""
 
       get_open_form().load_page("login")
 

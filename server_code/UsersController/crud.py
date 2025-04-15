@@ -18,12 +18,14 @@ from datetime import datetime
 #
 
 @anvil.server.callable
-def add_user(firstname, lastname, email, password):
+def add_user(firstname, lastname, email, phone_number, username, password):
   now = datetime.now()
   app_tables.users.add_row(
     firstname=firstname,
     lastname=lastname,
     email=email,
+    phone_number=phone_number,
+    username=username,
     password=password,
     created_at=now,
     updated_at=now,

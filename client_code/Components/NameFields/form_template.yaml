@@ -1,7 +1,7 @@
 components:
 - layout_properties: {grid_position: 'EAIAAB,DTIQZG'}
   name: firstname_field
-  properties: {background: 'theme:My Primary Color', foreground: 'theme:On Surface', placeholder: Enter your firstname}
+  properties: {background: 'theme:My Primary Color', enabled: true, foreground: 'theme:On Surface', placeholder: Enter your firstname}
   type: TextBox
 - layout_properties: {grid_position: 'TLIHYA,SGKNLN'}
   name: lastname_field
