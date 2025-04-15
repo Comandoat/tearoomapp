@@ -1,10 +1,19 @@
 components:
-- layout_properties: {grid_position: 'KNAUUB,PNQZFX'}
+- layout_properties: {grid_position: 'SDSCSX,IVJIVS'}
   name: name_fields
   properties: {}
   type: form:Components.NameFields
 - components:
-  - layout_properties: {grid_position: 'DPSJYF,QVUYRR'}
+  - layout_properties: {width: 970.4442290039062}
+    name: phone_number
+    properties: {enabled: true, text: Enter your phone number, visible: true}
+    type: TextBox
+  layout_properties: {grid_position: 'OAVBWV,BIMOBS'}
+  name: info_field
+  properties: {}
+  type: FlowPanel
+- components:
+  - layout_properties: {grid_position: 'KDEJXX,JEDRES'}
     name: credentials_fields
     properties: {}
     type: form:Components.CredentialsFields
@@ -12,11 +21,15 @@ components:
     name: confirmed_password_field
     properties: {background: 'theme:My Primary Color', foreground: 'theme:On Surface', placeholder: Confirm the password}
     type: TextBox
+  - layout_properties: {grid_position: 'LOYYOP,XJXXQD'}
+    name: profile_picture_field
+    properties: {text: Upload your profile picture}
+    type: FileLoader
   - layout_properties: {grid_position: 'FLOQNV,IZJPSS'}
     name: sign_up_form_buttons
     properties: {}
     type: form:Components.FormButtons
-  layout_properties: {grid_position: 'YUFUXY,RXFQVN'}
+  layout_properties: {grid_position: 'YUFUXY,ECYYSF'}
   name: sign_up_form_column_panel
   properties: {}
   type: ColumnPanel

@@ -234,6 +234,9 @@ db_schema:
     - admin_ui: {order: 22, width: 200}
       name: Email_Verified
       type: bool
+    - admin_ui: {order: 23, width: 200}
+      name: peofile_picture
+      type: media
     server: full
     title: users
   users_stats:
