@@ -29,6 +29,13 @@ def add_user(firstname, lastname, email, phone_number, username, password):
     password=password,
     created_at=now,
     updated_at=now,
+    account_locked=False,
     is_admin=False
   )
   return "user added with success"
+
+
+@anvil.server.callable
+def is_locked(email):
+  user = app_tables.users.get(email=email, account_locked=True)
+  return user is not None
