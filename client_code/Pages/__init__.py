@@ -11,8 +11,8 @@ import anvil.server
 class SharedStateManager:
     def __init__(self):
         self._state = {
-          "user": "Boris A",
-          "cart": []
+            "user": None,  # initialisé vide
+            "cart": []
         }
         self._listeners = []
 
@@ -33,7 +33,7 @@ class SharedStateManager:
     def unregister(self, callback):
         self._listeners.remove(callback)
 
-    """Cart Management"""
+    """ Cart Management """
 
     def add_to_cart(self, item):
         self._state["cart"].append(item)
@@ -41,5 +41,17 @@ class SharedStateManager:
 
     def get_cart(self):
         return self._state["cart"]
+
+    """ User Management """
+
+    def load_user(self, email):
+        user = app_tables.users.get(email=email)
+        if user:
+            fullname = f"{user['firstname']} {user['lastname']}"
+            self._state["user"] = fullname
+            self._notify()
+        else:
+            self._state["user"] = None
+            self._notify()
 
 state = SharedStateManager()
