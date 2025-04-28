@@ -25,6 +25,10 @@ components:
     name: confirmed_password_field
     properties: {background: 'theme:My Primary Color', foreground: 'theme:On Surface', placeholder: Confirm the password}
     type: TextBox
+  - layout_properties: {grid_position: 'SRLQXK,BDJGCX'}
+    name: suggest_password_button
+    properties: {role: outlined-button, text: Suggest Password}
+    type: Button
   - layout_properties: {grid_position: 'LOYYOP,XJXXQD'}
     name: profile_picture_field
     properties: {text: Upload your profile picture}
