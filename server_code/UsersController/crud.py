@@ -284,6 +284,48 @@ def update_user_profile(new_data):
         return "Erreur interne lors de la mise à jour du profil."
 
 @anvil.server.callable
+def update_profile_picture(new_photo_media):
+    """Met à jour la photo de profil de l'utilisateur connecté."""
+    # 1. Vérifier la connexion et obtenir l'ID utilisateur
+    user_info = anvil.server.call('get_user_info')
+    if not user_info:
+        return "Erreur : Vous devez être connecté pour modifier votre photo."
+        
+    user_row_id = user_info.get('user_row_id')
+    if not user_row_id:
+         return "Erreur : Impossible d'identifier l'utilisateur."
+
+    # 2. Récupérer l'utilisateur
+    user = app_tables.users.get_by_id(user_row_id)
+    if not user:
+        return "Erreur : Utilisateur non trouvé."
+
+    # 3. Valider l'objet media (vérification basique)
+    if not new_photo_media or not hasattr(new_photo_media, 'get_bytes'):
+        return "Erreur : Fichier invalide fourni pour la photo."
+        
+    # !! Optionnel : Re-valider type/taille côté serveur par sécurité !!
+    # content_type = new_photo_media.content_type
+    # length = new_photo_media.length
+    # if content_type not in ALLOWED_IMAGE_TYPES:
+    #    return f"Erreur serveur: Type de fichier non supporté ({content_type})"
+    # if length > MAX_FILE_SIZE_BYTES:
+    #    return f"Erreur serveur: Fichier trop volumineux ({length} octets)"
+
+    # 4. Mettre à jour la photo dans la table
+    try:
+        user.update(photo=new_photo_media, updated_at=datetime.now())
+        # TODO : Si l'intégrité des photos est implémentée, mettre à jour photo_hash ici
+        # photo_bytes = new_photo_media.get_bytes()
+        # new_hash = calculate_hash(photo_bytes) # Fonction de hachage à définir
+        # user.update(photo=new_photo_media, photo_hash=new_hash, updated_at=datetime.now())
+        
+        return "Photo de profil mise à jour avec succès."
+    except Exception as e:
+        print(f"Erreur lors de la mise à jour de la photo pour user {user_row_id}: {e}")
+        return "Erreur interne lors de la mise à jour de la photo."
+
+@anvil.server.callable
 # @anvil.server.require_user
 def delete_my_account():
     """Supprime définitivement (hard delete) le compte de l'utilisateur connecté."""

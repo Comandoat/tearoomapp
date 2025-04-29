@@ -6,6 +6,12 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 
+# Importer les constantes de validation depuis SignUpForm ou les redéfinir ici
+# (Il serait préférable de les mettre dans un module partagé)
+ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/gif', 'image/webp']
+MAX_FILE_SIZE_MB = 10
+MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024
+
 # --- Définition de la classe du formulaire ---
 class Profile(ProfileTemplate):
   def __init__(self, **properties):
@@ -23,6 +29,19 @@ class Profile(ProfileTemplate):
         self.save_button.add_event_handler('click', self.save_button_click)
     if hasattr(self, 'delete_account_button'):
         self.delete_account_button.add_event_handler('click', self.delete_account_button_click)
+        
+    # Lier le handler pour le nouveau FileLoader
+    # **ACTION REQUISE : Ajoutez un FileLoader nommé 'profile_picture_uploader' dans le designer**
+    if hasattr(self, 'profile_picture_uploader'):
+        # Optionnel: Rendre le FileLoader invisible et utiliser un bouton séparé pour le déclencher
+        # self.profile_picture_uploader.visible = False 
+        # if hasattr(self, 'change_picture_button'):
+        #    self.change_picture_button.add_event_handler('click', self.change_picture_button_click)
+        
+        # Lier l'événement 'change' qui se déclenche après la sélection du fichier
+        self.profile_picture_uploader.add_event_handler('change', self.profile_picture_uploader_change)
+    else:
+        print("AVERTISSEMENT: FileLoader 'profile_picture_uploader' non trouvé dans le formulaire Profile.")
 
   # --- Chargement des données ---
   def load_user_data(self):
@@ -112,3 +131,60 @@ class Profile(ProfileTemplate):
              Notification(f"Erreur de communication: {e}", title="Erreur", style="danger").show()
              self.delete_account_button.enabled = True
              self.delete_account_button.text = "Supprimer mon compte" 
+
+  # --- Gestionnaire pour le changement du FileLoader (upload photo) ---
+  def profile_picture_uploader_change(self, **event_args):
+    """Valide le fichier sélectionné et appelle le serveur pour mettre à jour la photo."""
+    new_file = self.profile_picture_uploader.file
+    
+    if new_file:
+        # 1. Valider le fichier (type et taille)
+        if new_file.content_type not in ALLOWED_IMAGE_TYPES:
+            Notification(f"Type de fichier non supporté ({new_file.content_type}). Veuillez choisir une image PNG, JPG, GIF ou WEBP.", 
+                         title="Format Invalide", style="danger", timeout=5).show()
+            self.profile_picture_uploader.clear()
+            return
+            
+        if new_file.length > MAX_FILE_SIZE_BYTES:
+            file_size_mb = round(new_file.length / (1024*1024), 2)
+            Notification(f"Le fichier est trop volumineux ({file_size_mb} Mo). La taille maximale autorisée est {MAX_FILE_SIZE_MB} Mo.", 
+                         title="Fichier Trop Grand", style="danger", timeout=5).show()
+            self.profile_picture_uploader.clear()
+            return
+
+        # 2. Appeler le serveur pour mettre à jour
+        try:
+            # Afficher un indicateur de chargement si possible
+            if hasattr(self, 'change_picture_button'): self.change_picture_button.enabled = False
+            self.profile_picture_uploader.enabled = False # Désactiver pendant l'upload
+            
+            response = anvil.server.call('update_profile_picture', new_file)
+            
+            if response == "Photo de profil mise à jour avec succès.":
+                Notification(response, title="Succès", style="success").show()
+                # Mettre à jour l'image affichée immédiatement
+                self.profile_image.source = new_file 
+                # Mettre à jour les données locales (si vous les réutilisez ailleurs)
+                if self.user_data:
+                    self.user_data['photo'] = new_file
+                # Vider le FileLoader après succès
+                self.profile_picture_uploader.clear()
+            else:
+                 Notification(response, title="Erreur Serveur", style="danger").show()
+                 self.profile_picture_uploader.clear()
+                 
+        except Exception as e:
+            Notification(f"Erreur de communication lors de la mise à jour de la photo: {e}", title="Erreur", style="danger").show()
+            self.profile_picture_uploader.clear()
+        finally:
+            # Réactiver les boutons
+            if hasattr(self, 'change_picture_button'): self.change_picture_button.enabled = True
+            self.profile_picture_uploader.enabled = True
+            
+    # else: Fichier a été effacé, pas d'action
+
+  # --- Gestionnaire pour déclencher le FileLoader (si bouton séparé) ---
+  # def change_picture_button_click(self, **event_args):
+  #    """Déclenche le dialogue de sélection de fichier du FileLoader caché."""
+  #    if hasattr(self, 'profile_picture_uploader'):
+  #        self.profile_picture_uploader.trigger('click') 

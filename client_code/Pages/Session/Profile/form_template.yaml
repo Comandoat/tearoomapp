@@ -10,6 +10,10 @@ components:
     horizontal_align: center
     margin: [null, 400.8, null, '400']
   type: Image
+- layout_properties: {grid_position: 'RABTOB,CKRFKA'}
+  name: profile_picture_uploader
+  properties: {}
+  type: FileLoader
 - layout_properties: {grid_position: 'UDARTF,DMPBYG'}
   name: username_label
   properties: {}
