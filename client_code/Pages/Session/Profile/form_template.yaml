@@ -3,46 +3,79 @@ components:
   name: label_1
   properties: {align: center, bold: true, font_size: 19, text: Profile}
   type: Label
+- layout_properties: {grid_position: 'RHOIHN,OUSGII'}
+  name: profile_image
+  properties:
+    height: 199.60000610351562
+    horizontal_align: center
+    margin: [null, 400.8, null, '400']
+  type: Image
+- layout_properties: {grid_position: 'UDARTF,DMPBYG'}
+  name: username_label
+  properties: {}
+  type: Label
+- layout_properties: {grid_position: 'UHSROO,VYNMUU'}
+  name: label_2
+  properties:
+    spacing:
+      margin: [null, '300', null, null]
+      padding: [null, '', null, null]
+    text: Name
+  type: Label
+- layout_properties: {grid_position: 'UHSROO,YSXXUQ'}
+  name: firstname_textbox
+  properties: {placeholder: Your Name, text: ''}
+  type: TextBox
+- layout_properties: {grid_position: 'IYTGWG,RQBUEN'}
+  name: label_3
+  properties:
+    spacing:
+      margin: [null, '300', null, null]
+    text: Surname
+  type: Label
+- layout_properties: {grid_position: 'IYTGWG,OWBTQW'}
+  name: lastname_textbox
+  properties: {placeholder: Your Username, text: ''}
+  type: TextBox
+- layout_properties: {grid_position: 'VJZGTA,HKVKNW'}
+  name: label_4
+  properties:
+    spacing:
+      margin: [null, '300', null, null]
+    text: Email
+  type: Label
+- layout_properties: {grid_position: 'VJZGTA,RNJOUD'}
+  name: email_textbox
+  properties: {placeholder: Your Email}
+  type: TextBox
+- layout_properties: {grid_position: 'YMJWPK,KJLXBU'}
+  name: label_5
+  properties:
+    spacing:
+      margin: [null, '300', null, null]
+    text: Phone
+  type: Label
+- layout_properties: {grid_position: 'YMJWPK,ULUSXG'}
+  name: phone_textbox
+  properties: {placeholder: Your Phone Number}
+  type: TextBox
 - components:
-  - layout_properties: {grid_position: 'OFXUFS,ZTPWWI'}
-    name: label_2
-    properties: {text: Name}
-    type: Label
-  - layout_properties: {grid_position: 'XKLXWU,GDPOKD'}
-    name: firstname_textbox
-    properties: {placeholder: Your Name, text: ''}
-    type: TextBox
-  - layout_properties: {grid_position: 'RPLTXK,QEEFVK'}
-    name: label_3
-    properties: {text: Surname}
-    type: Label
-  - layout_properties: {grid_position: 'LKHYPR,HJVYVM'}
-    name: lastname_textbox
-    properties: {placeholder: Your Username, text: ''}
-    type: TextBox
-  - layout_properties: {grid_position: 'ZARLRS,DVPTZB'}
-    name: label_4
-    properties: {text: Email}
-    type: Label
-  - layout_properties: {grid_position: 'XFTJYF,POXNBD'}
-    name: email_textbox
-    properties: {placeholder: Your Email}
-    type: TextBox
-  - layout_properties: {grid_position: 'RJTHUL,JBQTTB'}
-    name: label_5
-    properties: {text: Phone}
-    type: Label
-  - layout_properties: {grid_position: 'GPCNPX,HLLBIW'}
-    name: phone_textbox
-    properties: {placeholder: Your Phone Number}
-    type: TextBox
-  - layout_properties: {grid_position: 'UFRHJM,JVBCHC'}
-    name: username_label
-    properties: {}
-    type: Label
-  layout_properties: {grid_position: 'RQHDPR,LJUITJ'}
-  name: outlined_card_1
-  properties: {role: outlined-card}
+  - layout_properties: {}
+    name: save_button
+    properties: {text: Save}
+    type: Button
+  - layout_properties: {}
+    name: delete_account_button
+    properties: {align: right, bold: true, text: Delete Account, visible: true}
+    type: Button
+  layout_properties: {grid_position: 'FWZUXM,SDKTZE'}
+  name: flow_panel_1
+  properties: {align: center}
+  type: FlowPanel
+container:
+  properties:
+    col_widths: '{"VYNMUU":10,"YSXXUQ":50,"RQBUEN":10,"OWBTQW":50,"HKVKNW":10,"RNJOUD":50,"KJLXBU":10,"ULUSXG":50}'
+    spacing:
+      margin: [null, null, null, null]
   type: ColumnPanel
-container: {type: ColumnPanel}
 is_package: true

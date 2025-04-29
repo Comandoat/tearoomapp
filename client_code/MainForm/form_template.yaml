@@ -5,6 +5,10 @@ components:
     name: landing_link
     properties: {bold: true, font_size: null, text: TEA ROOM}
     type: Link
+  - layout_properties: {}
+    name: profile_link
+    properties: {bold: true, font: cambria, font_size: 16, text: PROFILE}
+    type: Link
   - event_bindings: {click: teas_link_click}
     layout_properties: {}
     name: teas_link
@@ -44,6 +48,10 @@ components:
         padding: [null, '5', null, '5']
       text: LOGIN
       underline: false
+    type: Link
+  - layout_properties: {}
+    name: logout_link
+    properties: {bold: true, font: cambria, font_size: 16, text: LOGOUT}
     type: Link
   layout_properties: {grid_position: 'HCAUKA,RUJORO'}
   name: nav_flow_panel

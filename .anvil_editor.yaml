@@ -33,6 +33,10 @@ unique_ids:
     Pages.Session.Customer.Orders: '1744395946048973489595426.2286'
     Pages.Session.Customer.Profile: '1744395984874390266018271.3591'
     Pages.Session.Profile: '1745947553354335777212142.31335'
+    Pages.Session.Profile.ItemTemplate2: '1745949078900421934355631.33374'
+    Pages.Session.Profile.ItemTemplate3: '1745949096820682557476796.8055'
+    Pages.Session.Profile.ItemTemplate4: '1745949142153592234533334.3784'
+    Pages.Session.Profile.RowTemplate1: '1745949124730857382530553.2639'
   modules:
     Components: '1744423512559652696990326.185'
     Pages: '1744423625227118581067166.86656'
