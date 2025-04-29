@@ -42,6 +42,10 @@ components:
   properties: {}
   type: ColumnPanel
 container:
-  properties: {role: custom-wide}
+  properties: {role: custom-wide, visible: true}
   type: ColumnPanel
+custom_component: true
+events: []
 is_package: true
+properties: []
+toolbox_item: {hidden: true}
