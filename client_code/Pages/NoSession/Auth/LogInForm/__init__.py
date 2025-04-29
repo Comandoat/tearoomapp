@@ -48,15 +48,15 @@ class LogInForm(LogInFormTemplate):
         else:
              Notification(f"Réponse inattendue du serveur: {response}", style="danger", title="Erreur Inattendue").show()
              
-    except anvil.server.ExternalError as e:
+    except anvil.server.InternalError as e:
         Notification(f"Erreur serveur: {e.message}", style="danger", title="Erreur Serveur").show()
+    except anvil.server.PermissionDenied as e:
+        Notification(f"Accès refusé: {e.message}", style="danger", title="Non autorisé").show()
     except Exception as e:
-        Notification(f"Une erreur est survenue: {e}", style="danger", title="Erreur de Communication").show()
+        Notification(f"Une erreur de communication est survenue: {e}", style="danger", title="Erreur").show()
     finally:
         # Re-enable button
         button.enabled = True
-        # Restaurer le texte original du bouton (probablement "Se connecter")
-        # Vous devrez peut-être stocker le texte original ou le définir ici
         button.text = "Se connecter" 
 
   # Ajoutez cette méthode si vous voulez implémenter le bouton reset

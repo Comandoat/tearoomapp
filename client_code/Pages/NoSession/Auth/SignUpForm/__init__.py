@@ -104,10 +104,12 @@ class SignUpForm(SignUpFormTemplate):
       else:
          Notification(f"Réponse inattendue du serveur: {response}", style="danger", title="Erreur Inattendue").show()
 
-    except anvil.server.ExternalError as e:
+    except anvil.server.InternalError as e:
         Notification(f"Erreur serveur: {e.message}", style="danger", title="Erreur Serveur").show()
+    except anvil.server.PermissionDenied as e:
+         Notification(f"Accès refusé: {e.message}", style="danger", title="Non autorisé").show()
     except Exception as e:
-      Notification(f"Une erreur est survenue: {e}", style="danger", title="Erreur de Communication").show()
+      Notification(f"Une erreur de communication est survenue: {e}", style="danger", title="Erreur").show()
     finally:
        self.sign_up_form_buttons.submit_button.enabled = True
        self.sign_up_form_buttons.submit_button.text = "S'inscrire"
@@ -118,5 +120,7 @@ class SignUpForm(SignUpFormTemplate):
           self.credentials_fields.password_field.text = suggested_password
           self.confirmed_password_field.text = suggested_password
           Notification("Mot de passe suggéré inséré.", style="info", timeout=2).show()
+      except anvil.server.InternalError as e:
+          Notification(f"Erreur serveur lors de la suggestion: {e.message}", style="danger").show()
       except Exception as e:
-          Notification(f"Erreur lors de la suggestion: {e}", style="danger").show()
+          Notification(f"Erreur de communication lors de la suggestion: {e}", style="danger").show()

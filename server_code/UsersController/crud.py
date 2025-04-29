@@ -398,12 +398,13 @@ def _is_caller_admin():
          print(f"DEBUG (_is_caller_admin): ERROR getting user by ID: {e_getbyid}")
          return False
          
-    # Vérifier que l'utilisateur existe, est admin et est actif
-    if admin_user and admin_user['is_admin'] and admin_user.get('is_active', True):
-        print("DEBUG (_is_caller_admin): User is admin and active. Returning True.")
+    # Vérifier que l'utilisateur existe, est admin et n'est pas explicitement inactif
+    if admin_user and admin_user['is_admin'] and admin_user['is_active'] is not False:
+        print(f"DEBUG (_is_caller_admin): User is admin and not explicitly inactive (is_active: {admin_user['is_active']}). Returning True.")
         return True
         
-    print("DEBUG (_is_caller_admin): User is not admin or not active. Returning False.")
+    # Si une des conditions échoue
+    print(f"DEBUG (_is_caller_admin): Conditions check failed (admin_user: {admin_user is not None}, is_admin: {admin_user['is_admin'] if admin_user else 'N/A'}, is_active: {admin_user['is_active'] if admin_user else 'N/A'}). Returning False.")
     return False
 
 # --- Fonctions callable pour l'admin --- 

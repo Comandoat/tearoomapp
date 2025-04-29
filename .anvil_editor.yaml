@@ -27,6 +27,7 @@ unique_ids:
     Pages.Session.Admin.AdminPanel.RowTemplate2: '1745956434541554411649927.9408'
     Pages.Session.Admin.ListClients: '1744396206571535253353316.29486'
     Pages.Session.Admin.ListProducts: '1744396183212130869674095.23087'
+    Pages.Session.Admin.UserRowTemplate: '1745969268204977509596257.0432'
     Pages.Session.Customer.Bookings: '1744551513482605399906947.8003'
     Pages.Session.Customer.Cart: '1744395927988337302771335.7637'
     Pages.Session.Customer.Cart.ItemTemplate1: '1744492524126484928362194.5227'

@@ -96,6 +96,10 @@ class Profile(ProfileTemplate):
         else:
             # Afficher l'erreur retournée par le serveur
             Notification(response, title="Erreur de mise à jour", style="danger").show()
+    except anvil.server.InternalError as e:
+         Notification(f"Erreur serveur: {e.message}", title="Erreur", style="danger").show()
+    except anvil.server.PermissionDenied as e:
+         Notification(f"Accès refusé: {e.message}", title="Erreur d'autorisation", style="danger").show()
     except Exception as e:
          Notification(f"Erreur de communication: {e}", title="Erreur", style="danger").show()
     finally:
@@ -127,6 +131,14 @@ class Profile(ProfileTemplate):
                 # Réactiver le bouton en cas d'erreur serveur
                 self.delete_account_button.enabled = True
                 self.delete_account_button.text = "Supprimer mon compte"
+        except anvil.server.InternalError as e:
+             Notification(f"Erreur serveur: {e.message}", title="Erreur", style="danger").show()
+             self.delete_account_button.enabled = True
+             self.delete_account_button.text = "Supprimer mon compte" 
+        except anvil.server.PermissionDenied as e:
+             Notification(f"Accès refusé: {e.message}", title="Erreur d'autorisation", style="danger").show()
+             self.delete_account_button.enabled = True
+             self.delete_account_button.text = "Supprimer mon compte"
         except Exception as e:
              Notification(f"Erreur de communication: {e}", title="Erreur", style="danger").show()
              self.delete_account_button.enabled = True
@@ -173,6 +185,12 @@ class Profile(ProfileTemplate):
                  Notification(response, title="Erreur Serveur", style="danger").show()
                  self.profile_picture_uploader.clear()
                  
+        except anvil.server.InternalError as e:
+            Notification(f"Erreur serveur lors de la mise à jour de la photo: {e.message}", title="Erreur", style="danger").show()
+            self.profile_picture_uploader.clear()
+        except anvil.server.PermissionDenied as e:
+            Notification(f"Accès refusé: {e.message}", title="Erreur d'autorisation", style="danger").show()
+            self.profile_picture_uploader.clear()
         except Exception as e:
             Notification(f"Erreur de communication lors de la mise à jour de la photo: {e}", title="Erreur", style="danger").show()
             self.profile_picture_uploader.clear()
