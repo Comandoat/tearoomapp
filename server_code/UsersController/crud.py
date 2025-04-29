@@ -364,3 +364,116 @@ def delete_my_account():
     except Exception as e:
         print(f"Erreur lors de la suppression définitive du compte pour user {user_row_id}: {e}")
         return "Erreur interne lors de la suppression du compte."
+
+
+# --- Fonctions Admin --- 
+
+# --- Helper function (non-callable directement par le client) ---
+def _is_caller_admin():
+    """Vérifie si l'utilisateur effectuant l'appel est un admin."""
+    user_info = anvil.server.call('get_user_info') # Assurez-vous que SessionController est importé ou accessible
+    if not user_info or not user_info.get('user_row_id'):
+        return False # Non connecté ou session invalide
+    
+    admin_user = app_tables.users.get_by_id(user_info['user_row_id'])
+    # Vérifier que l'utilisateur existe, est admin et est actif
+    if admin_user and admin_user['is_admin'] and admin_user.get('is_active', True):
+        return True
+    return False
+
+# --- Fonctions callable pour l'admin --- 
+
+@anvil.server.callable
+def is_current_user_admin():
+    """Fonction simple pour que le client vérifie le statut admin."""
+    return _is_caller_admin()
+
+@anvil.server.callable
+def admin_get_all_users():
+    """Retourne une liste simplifiée de tous les utilisateurs pour l'admin."""
+    if not _is_caller_admin():
+        raise anvil.server.PermissionDenied("Accès réservé aux administrateurs.")
+        
+    user_list = []
+    # Itérer sur tous les utilisateurs
+    for user in app_tables.users.search():
+        user_list.append({
+            'email': user['email'],
+            'firstname': user['firstname'],
+            'lastname': user['lastname'],
+            'username': user['username'],
+            'is_admin': user['is_admin'],
+            # Gérer si la colonne is_active n'existe pas encore partout
+            'is_active': user.get('is_active', True) if user['email'] != f"deleted_{user.get_id()}@example.com" else False, 
+            'account_locked': user.get('account_locked', False),
+            'row_id': user.get_id() # Important pour les actions futures
+        })
+    return user_list
+
+@anvil.server.callable
+def admin_get_user_details(user_row_id):
+    """Retourne toutes les données modifiables d'un utilisateur spécifique."""
+    if not _is_caller_admin():
+        raise anvil.server.PermissionDenied("Accès réservé aux administrateurs.")
+        
+    user = app_tables.users.get_by_id(user_row_id)
+    if not user:
+        return None # Ou lever une erreur: raise ValueError("Utilisateur non trouvé")
+        
+    # Retourner toutes les colonnes pertinentes (sauf le hash du mot de passe)
+    user_details = dict(user) 
+    user_details.pop('password', None) # Exclure le mot de passe
+    user_details['row_id'] = user.get_id() # Ajouter row_id pour référence facile
+    return user_details
+    
+@anvil.server.callable
+def admin_update_user(user_row_id, update_data):
+    """Met à jour les données d'un utilisateur spécifié par l'admin."""
+    if not _is_caller_admin():
+        raise anvil.server.PermissionDenied("Accès réservé aux administrateurs.")
+
+    user_to_update = app_tables.users.get_by_id(user_row_id)
+    if not user_to_update:
+        return f"Erreur : Utilisateur avec ID {user_row_id} non trouvé."
+
+    # --- Validation et Nettoyage des Données Reçues --- 
+    validated_data = {}
+    allowed_fields = ['firstname', 'lastname', 'email', 'phone_number', 'username', 
+                      'is_admin', 'is_active', 'account_locked'] 
+    
+    current_admin_info = anvil.server.call('get_user_info')
+    current_admin_row_id = current_admin_info.get('user_row_id') if current_admin_info else None
+
+    for field in allowed_fields:
+        if field in update_data:
+            value = update_data[field]
+            
+            # Validation spécifique
+            if field == 'email':
+                if not re.match(EMAIL_REGEX, value):
+                    return "Erreur : Format d'email invalide."
+                if value != user_to_update['email'] and app_tables.users.get(email=value):
+                    return "Erreur : Cette adresse email est déjà utilisée."
+            elif field == 'phone_number':
+                 if value and not re.match(PHONE_REGEX, value): 
+                     return "Erreur : Format de téléphone invalide."
+            elif field in ['is_admin', 'is_active', 'account_locked']:
+                 if not isinstance(value, bool):
+                     return f"Erreur : Le champ {field} doit être un booléen (True/False)."
+                 if field == 'is_admin' and user_row_id == current_admin_row_id and not value:
+                     return "Erreur : Un administrateur ne peut pas se retirer ses propres droits."
+                     
+            validated_data[field] = value
+
+    if not validated_data:
+        return "Erreur : Aucune donnée valide fournie pour la mise à jour."
+
+    validated_data['updated_at'] = datetime.now()
+
+    # --- Mise à jour ---
+    try:
+        user_to_update.update(**validated_data)
+        return "Utilisateur mis à jour avec succès."
+    except Exception as e:
+        print(f"Erreur admin lors de la mise à jour de user {user_row_id}: {e}")
+        return "Erreur interne lors de la mise à jour de l'utilisateur."

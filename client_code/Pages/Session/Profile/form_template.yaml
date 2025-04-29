@@ -66,7 +66,7 @@ components:
 - components:
   - layout_properties: {}
     name: save_button
-    properties: {text: Save}
+    properties: {text: Sauvegarder les modifiactions}
     type: Button
   - layout_properties: {}
     name: delete_account_button

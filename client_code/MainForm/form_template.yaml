@@ -5,7 +5,11 @@ components:
     name: landing_link
     properties: {bold: true, font_size: null, text: TEA ROOM}
     type: Link
-  - layout_properties: {}
+  - name: admin_link
+    properties: {bold: true, font: cambria, font_size: 16, text: PROFILE}
+    type: Link
+  - components: []
+    layout_properties: {}
     name: profile_link
     properties: {bold: true, font: cambria, font_size: 16, text: PROFILE}
     type: Link

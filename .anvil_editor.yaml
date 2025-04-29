@@ -23,6 +23,8 @@ unique_ids:
     Pages.NoSession.Products.Teas: '1744395848011400780804181.02545'
     Pages.NoSession.Products.Teas.TeaCard: '174449763734143463139077.4306'
     Pages.Session.Admin.AddProduct: '1744396164070896707687247.219'
+    Pages.Session.Admin.AdminPanel: '1745956014296526962034203.358'
+    Pages.Session.Admin.AdminPanel.RowTemplate2: '1745956434541554411649927.9408'
     Pages.Session.Admin.ListClients: '1744396206571535253353316.29486'
     Pages.Session.Admin.ListProducts: '1744396183212130869674095.23087'
     Pages.Session.Customer.Bookings: '1744551513482605399906947.8003'

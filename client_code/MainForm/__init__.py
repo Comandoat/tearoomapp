@@ -16,25 +16,39 @@ from ..Pages.NoSession.Products.Goodies import Goodies
 from ..Pages.NoSession.Auth.SignUpForm import SignUpForm
 from ..Pages.NoSession.Auth.LogInForm import LogInForm
 from ..Pages.Session.Profile import Profile
+from ..Pages.Session.Admin.AdminPanel import AdminPanel
 
 class MainForm(MainFormTemplate):
   def __init__(self, **properties):
     self.user = None # Stocker les infos utilisateur si connecté
+    self.is_admin = False # <<< Ajouter pour stocker le statut admin
     self.init_components(**properties)
     self.check_login_status() # Vérifier si l'utilisateur est déjà connecté
     if not self.user:
         # Si non connecté, charger la page d'accueil par défaut
         self.load_page("landing") 
     else:
-        # Optionnel: Charger une page par défaut pour l'utilisateur connecté
-        # Par exemple, la page de profil ou un tableau de bord
-        self.load_page("profile") # Charge le profil par défaut si connecté
+        # Charger le profil par défaut si connecté et non-admin
+        # Ou charger le panel admin si admin ? (à décider)
+        if self.is_admin:
+             self.load_page("admin") # Charger admin par défaut si admin
+        else:
+             self.load_page("profile") # Charge le profil par défaut si connecté
 
   def check_login_status(self):
     """Vérifie la session serveur et met à jour l'état et l'UI."""
     user_info = anvil.server.call('get_user_info')
+    self.is_admin = False # Réinitialiser par défaut
     if user_info:
         self.user = user_info
+        # <<< Vérifier si l'utilisateur est admin >>>
+        try:
+            # Appel serveur pour vérifier le statut admin
+            self.is_admin = anvil.server.call('is_current_user_admin')
+        except Exception as e:
+             print(f"Erreur lors de la vérification du statut admin: {e}")
+             self.is_admin = False
+                 
         # Mettre à jour l'UI pour l'état connecté
         # Assurez-vous que ces noms de liens/boutons existent dans votre designer
         if hasattr(self, 'login_link'): self.login_link.visible = False
@@ -52,6 +66,13 @@ class MainForm(MainFormTemplate):
         if hasattr(self, 'profile_link'): 
              # Attacher le handler ici s'il n'est pas déjà dans le designer
              self.profile_link.set_event_handler('click', self.profile_link_click)
+        # <<< Afficher/masquer lien admin >>>
+        # Assurez-vous d'avoir un lien nommé 'admin_link' dans le designer
+        if hasattr(self, 'admin_link'): 
+            self.admin_link.visible = self.is_admin
+            if self.is_admin:
+                 # Lier le handler au clic
+                 self.admin_link.set_event_handler('click', self.admin_link_click)
     else:
         self.user = None
         # Mettre à jour l'UI pour l'état déconnecté
@@ -60,6 +81,7 @@ class MainForm(MainFormTemplate):
         if hasattr(self, 'logout_link'): self.logout_link.visible = False
         if hasattr(self, 'profile_link'): self.profile_link.visible = False
         if hasattr(self, 'welcome_label'): self.welcome_label.visible = False
+        if hasattr(self, 'admin_link'): self.admin_link.visible = False # Cacher si déconnecté
 
   def load_page(self, page_name):
     self.content_panel.clear()
@@ -94,12 +116,19 @@ class MainForm(MainFormTemplate):
              # Rediriger vers login si on essaie d'accéder à profile sans être connecté
              print("Accès non autorisé à la page profil, redirection vers login.")
              self.load_page("login") 
+    elif page_name == "admin" and self.is_admin: # Vérifier si admin ici aussi
+        self.content_panel.add_component(AdminPanel())
     else:
         # Rediriger vers landing si la page demandée n'est pas accessible
-        print(f"Tentative de chargement de page '{page_name}' non autorisée ou inconnue.")
-        self.content_panel.add_component(Landing())
-        # Ou afficher un message d'erreur
-        # self.content_panel.add_component(Label(text="Page non trouvée ou accès non autorisé."))
+        if page_name == "admin" and not self.is_admin:
+             print("Accès non autorisé au panneau admin. Redirection vers la page d'accueil.")
+        elif page_name == "profile" and not self.user:
+             print("Accès non autorisé au profil. Redirection vers login.")
+             self.load_page("login") # Rediriger vers login si profil demandé sans être connecté
+             return # Eviter de charger Landing en plus
+        else:
+             print(f"Tentative de chargement de page '{page_name}' inconnue. Redirection vers la page d'accueil.")
+        self.content_panel.add_component(Landing()) # Fallback sur landing
 
   def terms_of_service_button_click(self, **event_args):
     """This method is called when the button is clicked"""
@@ -152,5 +181,10 @@ class MainForm(MainFormTemplate):
     """Handles the click of the profile link."""
     if self.user:
         self.load_page("profile")
+
+  def admin_link_click(self, **event_args):
+    """Handles the click of the admin link."""
+    if self.is_admin:
+        self.load_page("admin")
 
 
