@@ -47,7 +47,8 @@ def login_user(email, password):
 @anvil.server.callable
 def logout_user():
   anvil.server.session.clear()
-  print(f"SESSION ITEMS AFTER LOGOUT: {anvil.server.session.items()}")
+  # Simplification du message de log pour éviter les problèmes potentiels avec .items()
+  print(f"Session cleared after logout.") 
 
 @anvil.server.callable
 def set_user_info(email, user_row_id):
@@ -55,7 +56,8 @@ def set_user_info(email, user_row_id):
     # Stocker l'identifiant unique de la ligne (Row ID)
     anvil.server.session['user_email'] = email
     anvil.server.session['user_row_id'] = user_row_id # Utiliser une clé différente
-    print(f"SESSION ITEMS SET: {anvil.server.session.items()}")
+    # Modification du print pour éviter .items() et afficher les valeurs directement
+    print(f"SESSION ITEMS SET: user_email='{anvil.server.session.get('user_email')}', user_row_id='{anvil.server.session.get('user_row_id')}'")
 
 @anvil.server.callable
 def get_user_info():
