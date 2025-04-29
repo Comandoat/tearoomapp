@@ -122,15 +122,14 @@ EMAIL_REGEX = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
 PHONE_REGEX = r"^\+?[\d\s\-\(\)]{8,15}$"
 
 @anvil.server.callable
-def add_user(firstname, lastname, email, phone_number, username, password, password_confirm):
-  """Ajoute un utilisateur après validation (format email/téléphone, mdp) et hachage du mot de passe."""
+def add_user(firstname, lastname, email, phone_number, username, password, password_confirm, profile_picture=None):
+  """Ajoute un utilisateur après validation et hachage du mot de passe, incluant la photo de profil."""
   
   # 0. Valider le format de l'email
   if not re.match(EMAIL_REGEX, email):
       return "Erreur : Le format de l'adresse email est invalide."
       
   # 0. Valider le format du numéro de téléphone (si fourni)
-  # Si le numéro est optionnel, adaptez la logique
   if phone_number and not re.match(PHONE_REGEX, phone_number):
       return "Erreur : Le format du numéro de téléphone est invalide."
 
@@ -168,9 +167,10 @@ def add_user(firstname, lastname, email, phone_number, username, password, passw
       firstname=firstname,
       lastname=lastname,
       email=email,
-      phone_number=phone_number, # Stocker le numéro validé
+      phone_number=phone_number, 
       username=username,
       password=password_hash, 
+      photo=profile_picture, 
       created_at=now,
       updated_at=now,
       account_locked=False,

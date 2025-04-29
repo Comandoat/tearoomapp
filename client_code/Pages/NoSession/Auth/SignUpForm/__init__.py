@@ -5,7 +5,10 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 import anvil.server
 
-
+# Définir les types MIME et la taille maximale autorisés
+ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/gif', 'image/webp']
+MAX_FILE_SIZE_MB = 10
+MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024
 
 class SignUpForm(SignUpFormTemplate):
   def __init__(self, **properties):
@@ -13,8 +16,33 @@ class SignUpForm(SignUpFormTemplate):
     self.sign_up_form_buttons.submit_button.add_event_handler('click', self.submit_click)
     if hasattr(self, 'suggest_password_button'):
         self.suggest_password_button.add_event_handler('click', self.suggest_password_click)
+    # Attacher le gestionnaire d'événement change au FileLoader
+    # Assurez-vous que le nom 'profile_picture_field' est correct
+    if hasattr(self, 'profile_picture_field'):
+        self.profile_picture_field.add_event_handler('change', self.profile_picture_field_change)
+
+  def profile_picture_field_change(self, **event_args):
+    """Vérifie le fichier chargé lorsque l'utilisateur sélectionne une image."""
+    file = self.profile_picture_field.file
+    
+    if file:
+        # Vérification du type de fichier
+        if file.content_type not in ALLOWED_IMAGE_TYPES:
+            Notification(f"Type de fichier non supporté ({file.content_type}). Veuillez choisir une image PNG, JPG, GIF ou WEBP.", 
+                         title="Format Invalide", style="danger", timeout=5)
+            self.profile_picture_field.clear()
+            return
+            
+        # Vérification de la taille du fichier
+        if file.length > MAX_FILE_SIZE_BYTES:
+            file_size_mb = round(file.length / (1024*1024), 2)
+            Notification(f"Le fichier est trop volumineux ({file_size_mb} Mo). La taille maximale autorisée est {MAX_FILE_SIZE_MB} Mo.", 
+                         title="Fichier Trop Grand", style="danger", timeout=5)
+            self.profile_picture_field.clear()
+            return
 
   def submit_click(self, **event_args):
+    """This method is called when the submit button is clicked"""
     firstname = self.name_fields.firstname_field.text 
     lastname = self.name_fields.lastname_field.text
     email = self.credentials_fields.email_field.text
@@ -22,20 +50,28 @@ class SignUpForm(SignUpFormTemplate):
     username = self.username_field.text
     password = self.credentials_fields.password_field.text
     confirmed_password = self.confirmed_password_field.text 
+    # Récupérer l'objet Media depuis le FileLoader
+    # Assurez-vous que profile_picture_field est bien le nom de votre composant FileLoader
+    profile_pic_media = self.profile_picture_field.file if self.profile_picture_field.file else None
     
-
-    if not firstname or not lastname or not email or not password or not confirmed_password:
-      Notification("Every field must be filled", style="danger").show()
-      return
+    if not all([firstname, lastname, email, username, password, confirmed_password]):
+        Notification("Veuillez remplir tous les champs obligatoires.", style="warning", title="Champ manquant").show()
+        return
 
     if password != confirmed_password:
-      Notification("The passwords are not identical", style="danger").show()
-      return  
+        Notification("Les mots de passe ne sont pas identiques.", style="warning", title="Erreur de confirmation").show()
+        return
+
+    # Si un fichier est présent mais n'a pas passé la validation (ne devrait pas arriver si clear() a fonctionné)
+    if self.profile_picture_field.file and not profile_pic_media:
+         Notification("Veuillez sélectionner une image de profil valide.", title="Image Invalide", style="warning").show()
+         return
 
     self.sign_up_form_buttons.submit_button.enabled = False
     self.sign_up_form_buttons.submit_button.text = "Création en cours..."
 
     try:
+      # Appeler la fonction serveur en ajoutant l'objet media
       response = anvil.server.call('add_user', 
                                   firstname, 
                                   lastname, 
@@ -43,12 +79,16 @@ class SignUpForm(SignUpFormTemplate):
                                   phone_number, 
                                   username, 
                                   password, 
-                                  confirmed_password)
+                                  confirmed_password, 
+                                  profile_pic_media) # Ajout du paramètre
       
       if isinstance(response, str) and response.startswith("Erreur :"): 
         Notification(response, style="danger", title="Échec de l'inscription").show()
       elif response == "Compte créé avec succès ! Veuillez vérifier votre email.":
         Notification(response, style="success", title="Inscription réussie").show()
+        # Vider aussi le champ de fichier
+        self.profile_picture_field.clear()
+        # ... (vider les autres champs) ...
         self.name_fields.firstname_field.text = ""
         self.name_fields.lastname_field.text = ""
         self.credentials_fields.email_field.text = ""
