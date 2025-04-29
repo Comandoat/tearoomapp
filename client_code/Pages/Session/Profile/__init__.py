@@ -27,7 +27,7 @@ class Profile(ProfileTemplate):
   # --- Chargement des données ---
   def load_user_data(self):
     """Appelle la fonction serveur pour obtenir les données du profil et peuple les champs."""
-    # Récupérer les données textuelles de base
+    # Appelle la fonction serveur qui retourne maintenant la photo aussi
     self.user_data = anvil.server.call('get_user_profile')
     
     if self.user_data:
@@ -38,31 +38,15 @@ class Profile(ProfileTemplate):
         self.phone_textbox.text = self.user_data.get('phone_number', '')
         self.username_label.text = f"Nom d'utilisateur : {self.user_data.get('username', 'N/A')}"
         
-        # --- Charger et afficher la photo de profil --- 
-        # Assurez-vous que le composant Image s'appelle bien 'profile_image'
+        # --- Afficher la photo de profil directement depuis les données reçues --- 
         if hasattr(self, 'profile_image'):
-            try:
-                # Récupérer l'ID de la ligne utilisateur depuis la session
-                user_info = anvil.server.call('get_user_info')
-                if user_info and 'user_row_id' in user_info:
-                    user_row_id = user_info['user_row_id']
-                    # Récupérer la ligne complète de la table users
-                    user_row = app_tables.users.get_by_id(user_row_id)
-                    
-                    # Vérifier si l'utilisateur existe et a une photo
-                    if user_row and user_row['photo']:
-                        self.profile_image.source = user_row['photo']
-                    else:
-                        # Assigner une image par défaut si pas de photo ou utilisateur non trouvé
-                        # Adaptez le chemin si nécessaire
-                        self.profile_image.source = '_/theme/logo-tearoom-simple-logo.png' 
-                else:
-                     print("load_user_data: Impossible de récupérer user_row_id pour charger la photo.")
-                     self.profile_image.source = '_/theme/logo-tearoom-simple-logo.png' # Image par défaut
-            except Exception as e:
-                print(f"Erreur lors du chargement de la photo de profil: {e}")
-                self.profile_image.source = '_/theme/logo-tearoom-simple-logo.png' # Image par défaut en cas d'erreur
-        # --- Fin chargement photo --- 
+            profile_photo = self.user_data.get('photo') # Récupère l'objet Media (ou None)
+            if profile_photo:
+                self.profile_image.source = profile_photo
+            else:
+                # Assigner une image par défaut si pas de photo
+                self.profile_image.source = '_/theme/logo-tearoom-simple-logo.png' 
+        # --- Fin affichage photo --- 
             
     else:
         # Gérer le cas où les données ne peuvent pas être chargées (erreur ou déconnexion)

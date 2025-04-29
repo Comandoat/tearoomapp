@@ -204,10 +204,9 @@ def suggest_password():
 
 @anvil.server.callable
 def get_user_profile():
-    """Récupère les informations du profil de l'utilisateur actuellement connecté."""
-    user_info = anvil.server.call('get_user_info') # Réutilise la fonction de SessionController
+    """Récupère les informations du profil (y compris la photo) de l'utilisateur connecté."""
+    user_info = anvil.server.call('get_user_info') 
     if not user_info:
-        # Non connecté ou session expirée
         return None 
         
     user_row_id = user_info.get('user_row_id')
@@ -217,19 +216,20 @@ def get_user_profile():
 
     user = app_tables.users.get_by_id(user_row_id)
     if user:
-        # Retourner uniquement les champs nécessaires et non sensibles
-        return {
+        # Retourner les champs nécessaires, y compris la photo
+        profile_data = {
             'firstname': user['firstname'],
             'lastname': user['lastname'],
             'email': user['email'],
             'phone_number': user['phone_number'],
-            'username': user['username']
-            # Ne pas retourner password, is_admin, etc.
+            'username': user['username'],
+            # Ajouter la photo (peut être None si aucune photo n'est définie)
+            'photo': user['photo'] 
         }
+        return profile_data
     else:
         print(f"Erreur: Utilisateur non trouvé avec row_id {user_row_id} pour get_user_profile")
-        # L'utilisateur a peut-être été supprimé entre-temps
-        anvil.server.call('logout_user') # Déconnecter par sécurité
+        anvil.server.call('logout_user')
         return None
 
 @anvil.server.callable
