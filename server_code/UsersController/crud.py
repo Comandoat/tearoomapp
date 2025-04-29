@@ -201,3 +201,132 @@ def is_locked(email):
 def suggest_password():
     """Génère et suggère un mot de passe aléatoire fort."""
     return generer_mot_de_passe_aleatoire()
+
+@anvil.server.callable
+def get_user_profile():
+    """Récupère les informations du profil de l'utilisateur actuellement connecté."""
+    user_info = anvil.server.call('get_user_info') # Réutilise la fonction de SessionController
+    if not user_info:
+        # Non connecté ou session expirée
+        return None 
+        
+    user_row_id = user_info.get('user_row_id')
+    if not user_row_id:
+         print("Erreur: user_row_id non trouvé dans la session pour get_user_profile")
+         return None
+
+    user = app_tables.users.get_by_id(user_row_id)
+    if user:
+        # Retourner uniquement les champs nécessaires et non sensibles
+        return {
+            'firstname': user['firstname'],
+            'lastname': user['lastname'],
+            'email': user['email'],
+            'phone_number': user['phone_number'],
+            'username': user['username']
+            # Ne pas retourner password, is_admin, etc.
+        }
+    else:
+        print(f"Erreur: Utilisateur non trouvé avec row_id {user_row_id} pour get_user_profile")
+        # L'utilisateur a peut-être été supprimé entre-temps
+        anvil.server.call('logout_user') # Déconnecter par sécurité
+        return None
+
+@anvil.server.callable
+def update_user_profile(new_data):
+    """Met à jour les informations du profil de l'utilisateur connecté."""
+    user_info = anvil.server.call('get_user_info')
+    if not user_info:
+        return "Erreur : Vous devez être connecté pour modifier votre profil."
+        
+    user_row_id = user_info.get('user_row_id')
+    if not user_row_id:
+         return "Erreur : Impossible d'identifier l'utilisateur."
+
+    user = app_tables.users.get_by_id(user_row_id)
+    if not user:
+        return "Erreur : Utilisateur non trouvé."
+
+    # Valider les nouvelles données (email, téléphone)
+    new_email = new_data.get('email')
+    new_phone = new_data.get('phone_number')
+    
+    if new_email and not re.match(EMAIL_REGEX, new_email):
+        return "Erreur : Le format de la nouvelle adresse email est invalide."
+        
+    # Vérifier si le nouvel email est déjà utilisé par un AUTRE utilisateur
+    if new_email and new_email != user['email']:
+        existing_user = app_tables.users.get(email=new_email)
+        if existing_user:
+            return "Erreur : Cette adresse email est déjà utilisée par un autre compte."
+            
+    if new_phone and not re.match(PHONE_REGEX, new_phone):
+         return "Erreur : Le format du nouveau numéro de téléphone est invalide."
+
+    # Mettre à jour les champs autorisés
+    try:
+        update_dict = {
+            'firstname': new_data.get('firstname', user['firstname']), # Garde l'ancien si non fourni
+            'lastname': new_data.get('lastname', user['lastname']),
+            'email': new_email if new_email else user['email'],
+            'phone_number': new_phone if new_phone else user['phone_number'],
+            'updated_at': datetime.now()
+            # Ne pas autoriser la modification du username ici par défaut
+        }
+        user.update(**update_dict)
+        # Mettre à jour l'email dans la session si modifié
+        if new_email and new_email != user_info.get('user_email'):
+             anvil.server.session['user_email'] = new_email
+             
+        return "Profil mis à jour avec succès."
+    except Exception as e:
+        print(f"Erreur lors de la mise à jour du profil pour user {user_row_id}: {e}")
+        return "Erreur interne lors de la mise à jour du profil."
+
+@anvil.server.callable
+# @anvil.server.require_user # Peut être utile si vous utilisez le service Users d'Anvil en parallèle
+def delete_my_account():
+    """Supprime (soft delete) le compte de l'utilisateur connecté."""
+    # !! Sécurité : Idéalement, demander une re-authentification (mot de passe) avant cette action !!
+    
+    user_info = anvil.server.call('get_user_info')
+    if not user_info:
+        return "Erreur : Vous devez être connecté pour supprimer votre compte."
+        
+    user_row_id = user_info.get('user_row_id')
+    if not user_row_id:
+         return "Erreur : Impossible d'identifier l'utilisateur."
+
+    user = app_tables.users.get_by_id(user_row_id)
+    if not user:
+        # Déjà supprimé ou erreur
+        anvil.server.call('logout_user') 
+        return "Erreur : Utilisateur non trouvé."
+        
+    try:
+        # Soft delete : Marquer comme inactif et nettoyer certaines infos
+        user.update(
+            is_active=False, 
+            password="", # Effacer le hash
+            email=f"deleted_{user_row_id}@example.com", # Anonymiser email
+            phone_number="",
+            notes="",
+            photo=None, # Supprimer la photo
+            two_factor_secret=None, # Effacer 2FA si utilisé
+            recovery_codes=None,
+            updated_at=datetime.now()
+            # Garder firstname/lastname? Ou anonymiser aussi? Dépend des besoins.
+        )
+        
+        # Optionnel: Marquer dans users_stats si cette table est utilisée
+        # stats = app_tables.users_stats.get(user_email=user_info.get('user_email'))
+        # if stats:
+        #     stats.update(is_deleted=True)
+            
+        # Déconnecter l'utilisateur
+        anvil.server.call('logout_user')
+        return "Compte supprimé avec succès."
+        
+    except Exception as e:
+        print(f"Erreur lors de la suppression du compte pour user {user_row_id}: {e}")
+        return "Erreur interne lors de la suppression du compte."

@@ -16,8 +16,8 @@ class SignUpForm(SignUpFormTemplate):
     self.sign_up_form_buttons.submit_button.add_event_handler('click', self.submit_click)
     if hasattr(self, 'suggest_password_button'):
         self.suggest_password_button.add_event_handler('click', self.suggest_password_click)
+    
     # Attacher le gestionnaire d'événement change au FileLoader
-    # Assurez-vous que le nom 'profile_picture_field' est correct
     if hasattr(self, 'profile_picture_field'):
         self.profile_picture_field.add_event_handler('change', self.profile_picture_field_change)
 
@@ -26,10 +26,11 @@ class SignUpForm(SignUpFormTemplate):
     file = self.profile_picture_field.file
     
     if file:
+        
         # Vérification du type de fichier
         if file.content_type not in ALLOWED_IMAGE_TYPES:
             Notification(f"Type de fichier non supporté ({file.content_type}). Veuillez choisir une image PNG, JPG, GIF ou WEBP.", 
-                         title="Format Invalide", style="danger", timeout=5)
+                         title="Format Invalide", style="danger", timeout=5).show()
             self.profile_picture_field.clear()
             return
             
@@ -37,9 +38,12 @@ class SignUpForm(SignUpFormTemplate):
         if file.length > MAX_FILE_SIZE_BYTES:
             file_size_mb = round(file.length / (1024*1024), 2)
             Notification(f"Le fichier est trop volumineux ({file_size_mb} Mo). La taille maximale autorisée est {MAX_FILE_SIZE_MB} Mo.", 
-                         title="Fichier Trop Grand", style="danger", timeout=5)
+                         title="Fichier Trop Grand", style="danger", timeout=5).show()
             self.profile_picture_field.clear()
             return
+        
+    else:
+        pass
 
   def submit_click(self, **event_args):
     """This method is called when the submit button is clicked"""

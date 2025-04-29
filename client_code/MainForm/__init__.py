@@ -15,6 +15,7 @@ from ..Pages.NoSession.Products.Teas import Teas
 from ..Pages.NoSession.Products.Goodies import Goodies
 from ..Pages.NoSession.Auth.SignUpForm import SignUpForm
 from ..Pages.NoSession.Auth.LogInForm import LogInForm
+from ..Pages.Session.Profile import Profile
 
 class MainForm(MainFormTemplate):
   def __init__(self, **properties):
@@ -24,10 +25,10 @@ class MainForm(MainFormTemplate):
     if not self.user:
         # Si non connecté, charger la page d'accueil par défaut
         self.load_page("landing") 
-    # else: # Si connecté, charger une page par défaut pour utilisateur connecté
-        # self.load_page("dashboard") # Exemple
-        # Laissez la page vide pour l'instant ou chargez 'landing' même si connecté
-        # self.load_page("landing") 
+    else:
+        # Optionnel: Charger une page par défaut pour l'utilisateur connecté
+        # Par exemple, la page de profil ou un tableau de bord
+        self.load_page("profile") # Charge le profil par défaut si connecté
 
   def check_login_status(self):
     """Vérifie la session serveur et met à jour l'état et l'UI."""
@@ -46,6 +47,11 @@ class MainForm(MainFormTemplate):
             # Vous pourriez récupérer plus d'infos (prénom) pour personnaliser
             # self.welcome_label.text = f"Bienvenue {self.user['firstname']}" 
             self.welcome_label.text = f"Connecté: {self.user['user_email']}"
+        # Attacher le handler ici s'il n'est pas déjà dans le designer
+        self.logout_link.set_event_handler('click', self.logout_link_click)
+        if hasattr(self, 'profile_link'): 
+             # Attacher le handler ici s'il n'est pas déjà dans le designer
+             self.profile_link.set_event_handler('click', self.profile_link_click)
     else:
         self.user = None
         # Mettre à jour l'UI pour l'état déconnecté
@@ -80,6 +86,14 @@ class MainForm(MainFormTemplate):
       login_form = LogInForm()
       login_form.role = "custom-wide"
       self.content_panel.add_component(login_form)
+    elif page_name == "profile" and self.user:
+        # S'assurer que self.user est bien chargé avant d'ajouter la page Profile
+        if self.user:
+             self.content_panel.add_component(Profile())
+        else:
+             # Rediriger vers login si on essaie d'accéder à profile sans être connecté
+             print("Accès non autorisé à la page profil, redirection vers login.")
+             self.load_page("login") 
     else:
         # Rediriger vers landing si la page demandée n'est pas accessible
         print(f"Tentative de chargement de page '{page_name}' non autorisée ou inconnue.")
@@ -133,5 +147,10 @@ class MainForm(MainFormTemplate):
             open_form('MainForm')
         except Exception as e:
             Notification(f"Erreur lors de la déconnexion: {e}", style="danger").show()
+
+  def profile_link_click(self, **event_args):
+    """Handles the click of the profile link."""
+    if self.user:
+        self.load_page("profile")
 
 

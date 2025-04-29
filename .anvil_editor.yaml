@@ -32,6 +32,7 @@ unique_ids:
     Pages.Session.Customer.Form1: '1745911362954497570619136.4826'
     Pages.Session.Customer.Orders: '1744395946048973489595426.2286'
     Pages.Session.Customer.Profile: '1744395984874390266018271.3591'
+    Pages.Session.Profile: '1745947553354335777212142.31335'
   modules:
     Components: '1744423512559652696990326.185'
     Pages: '1744423625227118581067166.86656'
