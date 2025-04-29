@@ -46,9 +46,27 @@ def login_user(email, password):
 
 @anvil.server.callable
 def logout_user():
-  anvil.server.session.clear()
-  # Simplification du message de log pour éviter les problèmes potentiels avec .items()
-  print(f"Session cleared after logout.") 
+  """Efface les informations utilisateur spécifiques de la session serveur."""
+  try:
+    # Essayer de supprimer les clés spécifiques que nous avons définies
+    if 'user_row_id' in anvil.server.session:
+      del anvil.server.session['user_row_id']
+    if 'user_email' in anvil.server.session:
+      del anvil.server.session['user_email']
+    print(f"Custom session keys cleared after logout.")
+  except Exception as e:
+    # En cas d'erreur lors de la suppression des clés (ne devrait pas arriver souvent)
+    print(f"Error clearing custom session keys during logout: {e}")
+    # Tentative de fallback pour effacer toute la session, même si cela peut échouer
+    # Commentez/décommentez si nécessaire pour tester
+    # try:
+    #   anvil.server.session.clear()
+    # except Exception as clear_err:
+    #   print(f"Fallback session.clear() also failed: {clear_err}")
+      
+  # Note: Si vous utilisez également le service Users d'Anvil (anvil.users),
+  # vous pourriez aussi appeler anvil.users.logout() ici.
+  # anvil.users.logout()
 
 @anvil.server.callable
 def set_user_info(email, user_row_id):

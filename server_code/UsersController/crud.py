@@ -299,7 +299,6 @@ def delete_my_account():
 
     user = app_tables.users.get_by_id(user_row_id)
     if not user:
-        # Déjà supprimé ou erreur
         anvil.server.call('logout_user') 
         return "Erreur : Utilisateur non trouvé."
         
@@ -310,12 +309,10 @@ def delete_my_account():
             password="", # Effacer le hash
             email=f"deleted_{user_row_id}@example.com", # Anonymiser email
             phone_number="",
-            notes="",
             photo=None, # Supprimer la photo
             two_factor_secret=None, # Effacer 2FA si utilisé
             recovery_codes=None,
             updated_at=datetime.now()
-            # Garder firstname/lastname? Ou anonymiser aussi? Dépend des besoins.
         )
         
         # Optionnel: Marquer dans users_stats si cette table est utilisée
