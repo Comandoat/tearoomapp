@@ -36,9 +36,11 @@ def login_user(email, password):
     # 5. Connexion réussie : Mettre à jour last_login et définir la session
     try:
         user.update(last_login=datetime.now())
-        set_user_info(user['email'], user['id']) # Utilise la fonction set_user_info existante
+        # Utiliser user.get_id() pour obtenir l'identifiant unique de la ligne Anvil
+        set_user_info(user['email'], user.get_id()) 
         return f"Bienvenue {user['firstname']} {user['lastname']}" # Ou retourner un objet utilisateur / succès
     except Exception as e:
+        # L'erreur originale se produisait ici car user['id'] n'existe pas
         print(f"Erreur lors de la mise à jour de last_login ou de la session pour {email}: {e}")
         return "Erreur interne lors de la connexion."
 
@@ -48,18 +50,19 @@ def logout_user():
   print(f"SESSION ITEMS AFTER LOGOUT: {anvil.server.session.items()}")
 
 @anvil.server.callable
-def set_user_info(email, user_id):
-    # Stocker l'identifiant unique de l'utilisateur plutôt que l'email si possible
-    # Assurez-vous que user['id'] existe et est unique (il est ajouté par Anvil par défaut)
+def set_user_info(email, user_row_id):
+    """Stocke l'email et le Row ID de l'utilisateur dans la session."""
+    # Stocker l'identifiant unique de la ligne (Row ID)
     anvil.server.session['user_email'] = email
-    anvil.server.session['user_id'] = user_id
+    anvil.server.session['user_row_id'] = user_row_id # Utiliser une clé différente
     print(f"SESSION ITEMS SET: {anvil.server.session.items()}")
 
 @anvil.server.callable
 def get_user_info():
-    # Récupérer l'id stocké dans la session
-    user_id = anvil.server.session.get('user_id')
-    if user_id:
-        # On pourrait retourner plus d'infos sécurisées si besoin
-        return {"user_email": anvil.server.session.get('user_email'), "user_id": user_id}
+    """Récupère les informations utilisateur (email et Row ID) depuis la session."""
+    # Récupérer le Row ID stocké dans la session
+    user_row_id = anvil.server.session.get('user_row_id')
+    if user_row_id:
+        # Retourner les informations stockées
+        return {"user_email": anvil.server.session.get('user_email'), "user_row_id": user_row_id}
     return None # Ou {} pour indiquer aucune session active
