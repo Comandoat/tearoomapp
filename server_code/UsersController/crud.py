@@ -284,9 +284,9 @@ def update_user_profile(new_data):
         return "Erreur interne lors de la mise à jour du profil."
 
 @anvil.server.callable
-# @anvil.server.require_user # Peut être utile si vous utilisez le service Users d'Anvil en parallèle
+# @anvil.server.require_user
 def delete_my_account():
-    """Supprime (soft delete) le compte de l'utilisateur connecté."""
+    """Supprime définitivement (hard delete) le compte de l'utilisateur connecté."""
     # !! Sécurité : Idéalement, demander une re-authentification (mot de passe) avant cette action !!
     
     user_info = anvil.server.call('get_user_info')
@@ -299,31 +299,26 @@ def delete_my_account():
 
     user = app_tables.users.get_by_id(user_row_id)
     if not user:
+        # L'utilisateur n'existe plus, on peut juste déconnecter
         anvil.server.call('logout_user') 
-        return "Erreur : Utilisateur non trouvé."
+        return "Erreur : Utilisateur non trouvé (peut-être déjà supprimé)."
         
     try:
-        # Soft delete : Marquer comme inactif et nettoyer certaines infos
-        user.update(
-            is_active=False, 
-            password="", # Effacer le hash
-            email=f"deleted_{user_row_id}@example.com", # Anonymiser email
-            phone_number="",
-            photo=None, # Supprimer la photo
-            two_factor_secret=None, # Effacer 2FA si utilisé
-            recovery_codes=None,
-            updated_at=datetime.now()
-        )
+        # Hard delete : Supprimer la ligne de la table
+        user.delete()
         
-        # Optionnel: Marquer dans users_stats si cette table est utilisée
-        # stats = app_tables.users_stats.get(user_email=user_info.get('user_email'))
-        # if stats:
-        #     stats.update(is_deleted=True)
+        # Optionnel: Supprimer les stats associées si cette table est utilisée
+        # try:
+        #    stats = app_tables.users_stats.get(user_email=user_info.get('user_email'))
+        #    if stats:
+        #        stats.delete()
+        # except Exception as stats_e:
+        #    print(f"Avertissement: Erreur lors de la suppression des stats pour user {user_row_id}: {stats_e}")
             
-        # Déconnecter l'utilisateur
+        # Déconnecter l'utilisateur (important car la session contient peut-être encore le row_id)
         anvil.server.call('logout_user')
-        return "Compte supprimé avec succès."
+        return "Compte définitivement supprimé avec succès."
         
     except Exception as e:
-        print(f"Erreur lors de la suppression du compte pour user {user_row_id}: {e}")
+        print(f"Erreur lors de la suppression définitive du compte pour user {user_row_id}: {e}")
         return "Erreur interne lors de la suppression du compte."
