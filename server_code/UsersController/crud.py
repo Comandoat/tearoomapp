@@ -115,61 +115,71 @@ def generer_mot_de_passe_aleatoire(longueur=16):
 
 # --- Fonctions callable Anvil ---
 
+# Regex pour la validation basique de l'email
+EMAIL_REGEX = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+# Regex pour une validation simple de numéro de téléphone (ex: chiffres, +, -, espaces, (), longueur 8-15)
+# Adaptez cette regex si vous avez des formats plus spécifiques en tête
+PHONE_REGEX = r"^\+?[\d\s\-\(\)]{8,15}$"
+
 @anvil.server.callable
 def add_user(firstname, lastname, email, phone_number, username, password, password_confirm):
-  """Ajoute un utilisateur après validation et hachage du mot de passe."""
+  """Ajoute un utilisateur après validation (format email/téléphone, mdp) et hachage du mot de passe."""
   
-  # 0. Vérifier si l'utilisateur existe déjà
+  # 0. Valider le format de l'email
+  if not re.match(EMAIL_REGEX, email):
+      return "Erreur : Le format de l'adresse email est invalide."
+      
+  # 0. Valider le format du numéro de téléphone (si fourni)
+  # Si le numéro est optionnel, adaptez la logique
+  if phone_number and not re.match(PHONE_REGEX, phone_number):
+      return "Erreur : Le format du numéro de téléphone est invalide."
+
+  # 1. Vérifier si l'utilisateur existe déjà
   if app_tables.users.get(email=email):
       return "Erreur : Un compte existe déjà avec cet email."
   if app_tables.users.get(username=username):
       return "Erreur : Ce nom d'utilisateur est déjà pris."
 
-  # 1. Confirmer que les mots de passe correspondent
+  # 2. Confirmer que les mots de passe correspondent
   if password != password_confirm:
       return "Erreur : Les mots de passe ne correspondent pas."
 
-  # 2. Valider la complexité et l'entropie
+  # 3. Valider la complexité et l'entropie du mot de passe
   valide_complexite, message_complexite = valider_mot_de_passe(password)
   if not valide_complexite:
       return f"Erreur : {message_complexite}"
 
-  # 3. Évaluer la force avec zxcvbn
+  # 4. Évaluer la force avec zxcvbn
   valide_force, message_force = evaluer_force_mot_de_passe(password)
   if not valide_force:
       return f"Erreur : {message_force}"
       
-  # 4. Hacher le mot de passe
+  # 5. Hacher le mot de passe
   try:
       password_hash = hacher_mot_de_passe(password)
   except Exception as e:
       print(f"Erreur lors du hachage du mot de passe pour {email}: {e}")
-      # Ne pas donner de détails précis à l'utilisateur pour des raisons de sécurité
       return "Erreur interne lors de la création du compte. Veuillez réessayer."
 
-  # 5. Ajouter l'utilisateur à la base de données
+  # 6. Ajouter l'utilisateur à la base de données
   try:
     now = datetime.now()
     app_tables.users.add_row(
       firstname=firstname,
       lastname=lastname,
       email=email,
-        phone_number=phone_number, # S'assurer que ce champ est bien géré/validé côté client aussi
+      phone_number=phone_number, # Stocker le numéro validé
       username=username,
-        # Ne JAMAIS stocker le mot de passe en clair
-        password=password_hash, # Stocker le hash Argon2
+      password=password_hash, 
       created_at=now,
       updated_at=now,
       account_locked=False,
-        is_admin=False, # Par défaut, non admin
-        email_verified=False # L'email n'est pas encore vérifié
-        # Ajouter d'autres champs par défaut si nécessaire
-      )
-    # Potentiellement, envoyer un email de vérification ici
+      is_admin=False,
+      email_verified=False 
+    )
     return "Compte créé avec succès ! Veuillez vérifier votre email."
   except Exception as e:
     print(f"Erreur lors de l'ajout de l'utilisateur {email} à la BDD: {e}")
-    # Ne pas donner de détails précis à l'utilisateur
     return "Erreur interne lors de la création du compte. Veuillez réessayer."
 
 
