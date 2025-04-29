@@ -80,9 +80,23 @@ def set_user_info(email, user_row_id):
 @anvil.server.callable
 def get_user_info():
     """Récupère les informations utilisateur (email et Row ID) depuis la session."""
-    # Récupérer le Row ID stocké dans la session
-    user_row_id = anvil.server.session.get('user_row_id')
-    if user_row_id:
-        # Retourner les informations stockées
-        return {"user_email": anvil.server.session.get('user_email'), "user_row_id": user_row_id}
-    return None # Ou {} pour indiquer aucune session active
+    try:
+        # Essayer d'accéder directement aux clés
+        user_row_id = anvil.server.session['user_row_id']
+        user_email = anvil.server.session['user_email']
+        # Vérifier si les valeurs sont valides (pas juste None ou vides si cela peut arriver)
+        if user_row_id and user_email:
+            return {"user_email": user_email, "user_row_id": user_row_id}
+        else:
+            # Si une clé existe mais est vide/None
+            print("get_user_info: Session keys found but empty/None.")
+            return None
+    except KeyError:
+        # Si une des clés ('user_row_id' ou 'user_email') n'existe pas dans la session
+        print("get_user_info: Session keys not found (KeyError).")
+        return None
+    except Exception as e:
+        # Attraper d'autres erreurs potentielles liées à l'accès session
+        print(f"get_user_info: Unexpected error accessing session: {e}")
+        # Ici, l'erreur originale était peut-être "get"
+        return None

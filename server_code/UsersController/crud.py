@@ -371,14 +371,39 @@ def delete_my_account():
 # --- Helper function (non-callable directement par le client) ---
 def _is_caller_admin():
     """Vérifie si l'utilisateur effectuant l'appel est un admin."""
-    user_info = anvil.server.call('get_user_info') # Assurez-vous que SessionController est importé ou accessible
+    print("DEBUG (_is_caller_admin): Entering function")
+    user_info = None
+    try:
+        print("DEBUG (_is_caller_admin): Calling get_user_info...")
+        # Appel à la fonction dans SessionController
+        user_info = anvil.server.call('get_user_info') 
+        print(f"DEBUG (_is_caller_admin): get_user_info returned: {user_info}")
+    except Exception as e_getinfo:
+        print(f"DEBUG (_is_caller_admin): ERROR calling get_user_info: {e_getinfo}")
+        # Si l'erreur se produit ici, la cause est probablement dans get_user_info ou l'appel lui-même
+        return False
+        
     if not user_info or not user_info.get('user_row_id'):
+        print("DEBUG (_is_caller_admin): No user_info or user_row_id found in session.")
         return False # Non connecté ou session invalide
     
-    admin_user = app_tables.users.get_by_id(user_info['user_row_id'])
+    user_row_id = user_info['user_row_id']
+    print(f"DEBUG (_is_caller_admin): Found user_row_id: {user_row_id}")
+    admin_user = None
+    try:
+        print(f"DEBUG (_is_caller_admin): Getting user row by id: {user_row_id}")
+        admin_user = app_tables.users.get_by_id(user_row_id)
+        print(f"DEBUG (_is_caller_admin): User row fetched: {admin_user is not None}")
+    except Exception as e_getbyid:
+         print(f"DEBUG (_is_caller_admin): ERROR getting user by ID: {e_getbyid}")
+         return False
+         
     # Vérifier que l'utilisateur existe, est admin et est actif
     if admin_user and admin_user['is_admin'] and admin_user.get('is_active', True):
+        print("DEBUG (_is_caller_admin): User is admin and active. Returning True.")
         return True
+        
+    print("DEBUG (_is_caller_admin): User is not admin or not active. Returning False.")
     return False
 
 # --- Fonctions callable pour l'admin --- 
@@ -386,7 +411,10 @@ def _is_caller_admin():
 @anvil.server.callable
 def is_current_user_admin():
     """Fonction simple pour que le client vérifie le statut admin."""
-    return _is_caller_admin()
+    print("DEBUG (is_current_user_admin): Callable function entered. Calling helper...")
+    result = _is_caller_admin()
+    print(f"DEBUG (is_current_user_admin): Helper returned {result}. Returning to client.")
+    return result
 
 @anvil.server.callable
 def admin_get_all_users():
