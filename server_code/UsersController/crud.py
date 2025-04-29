@@ -2,7 +2,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 import anvil.server
-from datetime import datetime
+from datetime import datetime 
 import re
 import math
 from collections import Counter
@@ -10,6 +10,7 @@ from zxcvbn import zxcvbn
 from argon2 import PasswordHasher, exceptions as argon_exceptions
 import secrets
 import string
+
 
 # This is a server package. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -26,23 +27,32 @@ import string
 
 # --- Fonctions de validation et sécurité du mot de passe ---
 
-MIN_ENTROPY_PER_CHAR = 3.0 # Seuil d'entropie minimum par caractère (à ajuster)
+ENTROPIE_MINIMALE_BITS = 50  # Recommandé : entre 50 et 60 bits minimum
 
-def entropie(password):
-    """Calcule l'entropie de Shannon pour un mot de passe."""
-    if not password:
-        return 0
-    length = len(password)
-    freq = Counter(password)
-    entropy_bits = 0
-    for count in freq.values():
-        probability = count / length
-        entropy_bits -= probability * math.log2(probability)
-    return entropy_bits
+def entropie(mot_de_passe):
+    """Calcule une estimation d'entropie en fonction de l'alphabet utilisé."""
+    alphabet_size = 0
+    if re.search(r'[a-z]', mot_de_passe):
+        alphabet_size += 26
+    if re.search(r'[A-Z]', mot_de_passe):
+        alphabet_size += 26
+    if re.search(r'[0-9]', mot_de_passe):
+        alphabet_size += 10
+    if re.search(r'[!@#$%^&*(),.?":{}|<>]', mot_de_passe):
+        alphabet_size += len('!@#$%^&*(),.?":{}|<>')
+
+    if alphabet_size == 0:
+        return 0  # Aucun caractère reconnu
+
+    return len(mot_de_passe) * math.log2(alphabet_size)
+
+def calculer_entropie_estimee(mot_de_passe):
+    """Alias pour compatibilité avec l'insertion demandée."""
+    return entropie(mot_de_passe)
 
 def valider_mot_de_passe(mot_de_passe):
     """Vérifie les critères de complexité de base du mot de passe."""
-    if len(mot_de_passe) < 12: # Augmentation de la longueur minimale
+    if len(mot_de_passe) < 12:
         return False, "Le mot de passe doit contenir au moins 12 caractères."
     if not re.search(r"[A-Z]", mot_de_passe):
         return False, "Le mot de passe doit contenir au moins une majuscule."
@@ -50,16 +60,14 @@ def valider_mot_de_passe(mot_de_passe):
         return False, "Le mot de passe doit contenir au moins une minuscule."
     if not re.search(r"[0-9]", mot_de_passe):
         return False, "Le mot de passe doit contenir au moins un chiffre."
-    if not re.search(r"[!@#$%^&*(),.?\"/:{}|<>]", mot_de_passe): # Échappement de "
+    if not re.search(r'[!@#$%^&*(),.?":{}|<>]', mot_de_passe):
         return False, "Le mot de passe doit contenir au moins un caractère spécial."
-    
-    # Vérification de l'entropie
-    entropy_bits = entropie(mot_de_passe)
-    required_entropy = MIN_ENTROPY_PER_CHAR * len(mot_de_passe)
-    # On peut aussi définir un seuil absolu (ex: 70 bits)
-    # required_entropy = 70 
-    if entropy_bits < required_entropy:
-         return False, f"L'entropie du mot de passe ({entropy_bits:.2f} bits) est trop faible. Augmentez la complexité ou la longueur. Requis: > {required_entropy:.2f} bits"
+
+
+    # Vérification de l'entropie absolue recommandée
+    entropie_totale = calculer_entropie_estimee(mot_de_passe)
+    if entropie_totale < ENTROPIE_MINIMALE_BITS:
+        return False, f"Entropie insuffisante ({entropie_totale:.2f} bits). Minimum requis : {ENTROPIE_MINIMALE_BITS} bits."
 
     return True, "Critères de complexité et entropie respectés."
 
@@ -146,17 +154,17 @@ def add_user(firstname, lastname, email, phone_number, username, password, passw
       firstname=firstname,
       lastname=lastname,
       email=email,
-      phone_number=phone_number, # S'assurer que ce champ est bien géré/validé côté client aussi
+        phone_number=phone_number, # S'assurer que ce champ est bien géré/validé côté client aussi
       username=username,
-      # Ne JAMAIS stocker le mot de passe en clair
-      password=password_hash, # Stocker le hash Argon2
+        # Ne JAMAIS stocker le mot de passe en clair
+        password=password_hash, # Stocker le hash Argon2
       created_at=now,
       updated_at=now,
       account_locked=False,
-      is_admin=False, # Par défaut, non admin
-      email_verified=False # L'email n'est pas encore vérifié
-      # Ajouter d'autres champs par défaut si nécessaire
-    )
+        is_admin=False, # Par défaut, non admin
+        email_verified=False # L'email n'est pas encore vérifié
+        # Ajouter d'autres champs par défaut si nécessaire
+      )
     # Potentiellement, envoyer un email de vérification ici
     return "Compte créé avec succès ! Veuillez vérifier votre email."
   except Exception as e:

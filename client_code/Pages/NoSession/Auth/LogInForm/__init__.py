@@ -13,27 +13,25 @@ class LogInForm(LogInFormTemplate):
     self.init_components(**properties)
 
     # Any code you write here will run when the form opens.
-    # Assumons que les champs email/password sont dans self.credentials_fields
-    # et le bouton de soumission dans self.log_in_form_buttons
-    # Adaptez ces noms si nécessaire selon votre designer Anvil
-    if hasattr(self, 'log_in_form_buttons') and hasattr(self.log_in_form_buttons, 'submit_button'):
-        self.log_in_form_buttons.submit_button.add_event_handler('click', self.login_button_click)
-    
-    # Si les champs sont directement sur le formulaire:
-    # if hasattr(self, 'login_button'): 
-    #    self.login_button.add_event_handler('click', self.login_button_click)
+    # Utilisation des noms de composants spécifiques fournis
+    if hasattr(self, 'form_buttons_1') and hasattr(self.form_buttons_1, 'submit_button'):
+        self.form_buttons_1.submit_button.add_event_handler('click', self.login_button_click)
+    # Ajouter un handler pour le reset_button si nécessaire
+    # if hasattr(self, 'form_buttons_1') and hasattr(self.form_buttons_1, 'reset_button'):
+    #     self.form_buttons_1.reset_button.add_event_handler('click', self.reset_button_click)
 
   def login_button_click(self, **event_args):
     """Handles the click of the login button."""
-    # Assurez-vous que ces noms de composants correspondent à votre designer
-    email = self.credentials_fields.email_field.text
-    password = self.credentials_fields.password_field.text
+    # Utilisation des noms de composants spécifiques fournis
+    # Assurez-vous que credentials_fields_1 contient bien email_field et password_field
+    email = self.credentials_fields_1.email_field.text
+    password = self.credentials_fields_1.password_field.text
 
     if not email or not password:
         Notification("Veuillez entrer l'email et le mot de passe.", style="warning", title="Champs requis").show()
         return
 
-    # Disable button
+    # Disable button (le bouton est passé dans event_args)
     button = event_args['sender']
     button.enabled = False
     button.text = "Connexion..."
@@ -57,7 +55,15 @@ class LogInForm(LogInFormTemplate):
     finally:
         # Re-enable button
         button.enabled = True
-        button.text = "Se connecter"
+        # Restaurer le texte original du bouton (probablement "Se connecter")
+        # Vous devrez peut-être stocker le texte original ou le définir ici
+        button.text = "Se connecter" 
+
+  # Ajoutez cette méthode si vous voulez implémenter le bouton reset
+  # def reset_button_click(self, **event_args):
+  #   """Handles the click of the reset button."""
+  #   self.credentials_fields_1.email_field.text = ""
+  #   self.credentials_fields_1.password_field.text = ""
 
   # Supprimez les fonctions on_state_change et form_hide si state n'est pas utilisé
   # def form_hide(self, **event_args):
