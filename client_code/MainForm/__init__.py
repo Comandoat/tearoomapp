@@ -73,6 +73,16 @@ class MainForm(MainFormTemplate):
             if self.is_admin:
                  # Lier le handler au clic
                  self.admin_link.set_event_handler('click', self.admin_link_click)
+        
+        # <<< Afficher indicateur panier et mettre à jour >>>
+        if hasattr(self, 'cart_indicator_label'):
+             self.cart_indicator_label.visible = True
+             # Lier le clic pour aller au panier (si pas déjà fait)
+             self.cart_indicator_label.set_event_handler('click', self.cart_indicator_click)
+             # Mettre à jour le compteur
+             self.update_cart_indicator()
+        else:
+            print("AVERTISSEMENT (MainForm): Label 'cart_indicator_label' non trouvé.")
     else:
         self.user = None
         # Mettre à jour l'UI pour l'état déconnecté
@@ -82,6 +92,19 @@ class MainForm(MainFormTemplate):
         if hasattr(self, 'profile_link'): self.profile_link.visible = False
         if hasattr(self, 'welcome_label'): self.welcome_label.visible = False
         if hasattr(self, 'admin_link'): self.admin_link.visible = False # Cacher si déconnecté
+        if hasattr(self, 'cart_indicator_label'): self.cart_indicator_label.visible = False
+
+  def update_cart_indicator(self):
+    """Met à jour le texte de l'indicateur du panier."""
+    if self.user and hasattr(self, 'cart_indicator_label'): # Vérifier si connecté et si le label existe
+        try:
+            item_count = anvil.server.call('get_cart_item_count')
+            self.cart_indicator_label.text = f"Panier ({item_count})"
+        except Exception as e:
+            print(f"Erreur lors de la mise à jour de l'indicateur panier: {e}")
+            # Afficher un état d'erreur ou juste le texte par défaut?
+            self.cart_indicator_label.text = "Panier (?)"
+    # else: Pas connecté ou label non trouvé, ne rien faire
 
   def load_page(self, page_name):
     self.content_panel.clear()
@@ -186,5 +209,13 @@ class MainForm(MainFormTemplate):
     """Handles the click of the admin link."""
     if self.is_admin:
         self.load_page("admin")
+
+  def cart_indicator_click(self, **event_args):
+      """Gère le clic sur l'indicateur du panier pour charger la page panier."""
+      if self.user:
+          print("Chargement page panier...")
+          # Décommentez ceci lorsque CartPage.py existe
+          # self.load_page("cart") 
+          pass # Ne rien faire tant que la page n'existe pas
 
 

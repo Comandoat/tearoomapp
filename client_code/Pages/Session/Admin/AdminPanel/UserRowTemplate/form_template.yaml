@@ -35,5 +35,5 @@ components:
 container: {type: ColumnPanel}
 custom_component: true
 events: []
-is_package: false
+is_package: true
 properties: []

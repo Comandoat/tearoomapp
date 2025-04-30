@@ -21,6 +21,25 @@ class SignUpForm(SignUpFormTemplate):
     if hasattr(self, 'profile_picture_field'):
         self.profile_picture_field.add_event_handler('change', self.profile_picture_field_change)
 
+    # --- Lier le gestionnaire pour l'événement reset venant de FormButtons --- 
+    # Utiliser set_event_handler pour écouter les événements levés par le composant enfant
+    self.sign_up_form_buttons.set_event_handler('x-reset-clicked', self.reset_form_fields)
+
+  def reset_form_fields(self, **event_args):
+    """Vide tous les champs du formulaire d'inscription."""
+    # Vider les champs texte
+    if hasattr(self.name_fields, 'firstname_field'): self.name_fields.firstname_field.text = ""
+    if hasattr(self.name_fields, 'lastname_field'): self.name_fields.lastname_field.text = ""
+    if hasattr(self.credentials_fields, 'email_field'): self.credentials_fields.email_field.text = ""
+    if hasattr(self.credentials_fields, 'password_field'): self.credentials_fields.password_field.text = ""
+    if hasattr(self, 'confirmed_password_field'): self.confirmed_password_field.text = ""
+    if hasattr(self, 'phone_number'): self.phone_number.text = ""
+    if hasattr(self, 'username_field'): self.username_field.text = ""
+    # Vider le FileLoader
+    if hasattr(self, 'profile_picture_field'): self.profile_picture_field.clear()
+    # Optionnel: Vider les labels d'erreur ou notifications si nécessaire
+    print("SignUp Form fields cleared.") # Pour débogage
+
   def profile_picture_field_change(self, **event_args):
     """Vérifie le fichier chargé lorsque l'utilisateur sélectionne une image."""
     file = self.profile_picture_field.file

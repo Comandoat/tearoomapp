@@ -20,6 +20,19 @@ class LogInForm(LogInFormTemplate):
     # if hasattr(self, 'form_buttons_1') and hasattr(self.form_buttons_1, 'reset_button'):
     #     self.form_buttons_1.reset_button.add_event_handler('click', self.reset_button_click)
 
+    # --- Lier le gestionnaire pour l'événement reset venant de FormButtons --- 
+    if hasattr(self, 'form_buttons_1'):
+        self.form_buttons_1.set_event_handler('x-reset-clicked', self.reset_form_fields)
+
+  def reset_form_fields(self, **event_args):
+      """Vide les champs du formulaire de connexion."""
+      # Vider les champs email et password
+      # Utiliser les noms de composants confirmés précédemment
+      if hasattr(self, 'credentials_fields_1'):
+         if hasattr(self.credentials_fields_1, 'email_field'): self.credentials_fields_1.email_field.text = ""
+         if hasattr(self.credentials_fields_1, 'password_field'): self.credentials_fields_1.password_field.text = ""
+      print("LogIn Form fields cleared.") # Pour débogage
+
   def login_button_click(self, **event_args):
     """Handles the click of the login button."""
     # Utilisation des noms de composants spécifiques fournis

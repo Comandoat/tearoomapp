@@ -12,7 +12,15 @@ class FormButtons(FormButtonsTemplate):
     self.init_components(**properties)
 
     # Any code you write here will run before the form opens.
+    # Lier un handler au clic du bouton reset INTERNE au template
+    # Assurez-vous que le bouton dans le designer de FormButtons s'appelle 'reset_button'
+    if hasattr(self, 'reset_button'):
+        self.reset_button.add_event_handler('click', self.reset_button_click)
 
-  def suggest_password_button_click(self, **event_args):
-    """This method is called when the button is clicked"""
-    pass
+  def reset_button_click(self, **event_args):
+    """Cette méthode est appelée quand le bouton reset interne est cliqué."""
+    # Lève un événement personnalisé sur CETTE instance du composant FormButtons
+    # Le formulaire parent pourra écouter cet événement.
+    self.raise_event("x-reset-clicked")
+    # Optionnel: Empêcher la propagation si d'autres composants imbriqués écoutent
+    # event_args.stop_propagation()
