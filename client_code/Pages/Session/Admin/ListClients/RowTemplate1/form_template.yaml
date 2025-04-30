@@ -1,0 +1,23 @@
+components:
+- name: email_label
+  properties: {}
+  type: Label
+  layout_properties: {column: A}
+- name: name_label
+  properties: {}
+  type: Label
+  layout_properties: {column: B}
+- name: status_label
+  properties: {align: right}
+  type: Label
+  layout_properties: {column: C}
+- name: activate_button
+  properties: {text: Activer/Désactiver}
+  type: Button
+  layout_properties: {column: D}
+- name: edit_button
+  properties: {text: Modifier, enabled: false} # Désactivé pour l'instant
+  type: Button
+  layout_properties: {column: E}
+container: {type: DataRowPanel}
+is_package: true 

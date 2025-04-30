@@ -1,0 +1,90 @@
+tables:
+  bookings:
+    created_at: datetime
+    updated_at: datetime
+    table: reference(tables)
+    date: datetime
+    is_past: bool
+    is_confirmed: bool
+
+  carts:
+    content: simpleObject
+    total_amount: number
+    created_at: datetime
+    update_at: datetime
+    user_id: string
+
+  goodies:
+    created_at: datetime
+    updated_at: datetime
+    name: string
+    description: string
+    quantity: number
+    is_available: bool
+    image: media
+    price: number
+
+  goodies_stats:
+    goodie_name: string
+    generated_income: number
+    sells_count: number
+    created_at: datetime
+    updated_at: datetime
+
+  orders:
+    user_id: number
+    created_at: datetime
+    is_done: bool
+    content: simpleObject
+
+  tables:
+    chairs_count: number
+    is_available: bool
+    name: string
+
+  teas:
+    name: string
+    price: number
+    image: media
+    description: string
+    is_available: bool
+
+  teas_stats:
+    tea_name: string
+    generated_income: number
+    sells_count: number
+    created_at: datetime
+    updated_at: date
+
+  users:
+    firstname: string
+    lastname: string
+    email: string
+    password: string
+    photo: media
+    created_at: datetime
+    updated_at: datetime
+    is_admin: bool
+    username: string
+    email_verified: bool
+    language: string
+    is_active: bool
+    notes: string
+    flag: string
+    password_last_changed: datetime
+    two_factor_enabled: bool
+    two_factor_secret: string
+    recovery_codes: string
+    last_login: datetime
+    last_known_ip: string
+    account_locked: bool
+    phone_number: string
+
+  users_stats:
+    user_email: string
+    created_at: datetime
+    updated_at: datetime
+    generated_income: number
+    bookings_generated_income: number
+    orders_generated_income: number
+    is_deleted: bool

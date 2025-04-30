@@ -1,3 +1,12 @@
-components: []
+components:
+- name: label_1
+  properties: {text: Gestion des Utilisateurs, role: headline, align: center}
+  type: Label
+  layout_properties: {grid_position: 'DXBASY,QSSZGY'}
+- name: user_repeating_panel
+  properties: {}
+  type: RepeatingPanel
+  layout_properties: {grid_position: 'UHTZUL,JHYXHB'}
+  item_template: client_code/Pages/Session/Admin/ListClients/RowTemplate1
 container: {type: ColumnPanel}
 is_package: true

@@ -22,7 +22,7 @@ from ..Pages.Session.Admin.AdminPanel import AdminPanel
 class MainForm(MainFormTemplate):
   def __init__(self, **properties):
     self.user = None # Stocker les infos utilisateur si connecté
-    self.is_admin = False # <<< Ajouter pour stocker le statut admin
+    self.is_admin = False # Variable pour stocker le statut admin
     self.init_components(**properties)
     self.check_login_status() # Vérifier si l'utilisateur est déjà connecté
     if not self.user:
@@ -42,16 +42,14 @@ class MainForm(MainFormTemplate):
     self.is_admin = False # Réinitialiser par défaut
     if user_info:
         self.user = user_info
-        # <<< Vérifier si l'utilisateur est admin >>>
+        # Vérifier si l'utilisateur est admin en appelant la fonction serveur
         try:
-            # Appel serveur pour vérifier le statut admin
             self.is_admin = anvil.server.call('is_current_user_admin')
         except Exception as e:
-             print(f"Erreur lors de la vérification du statut admin: {e}")
-             self.is_admin = False
+            print(f"Erreur lors de la vérification du statut admin: {e}")
+            self.is_admin = False # Assumer non-admin en cas d'erreur
                  
         # Mettre à jour l'UI pour l'état connecté
-        # Assurez-vous que ces noms de liens/boutons existent dans votre designer
         if hasattr(self, 'login_link'): self.login_link.visible = False
         if hasattr(self, 'signup_link'): self.signup_link.visible = False
         if hasattr(self, 'logout_link'): self.logout_link.visible = True
@@ -65,15 +63,13 @@ class MainForm(MainFormTemplate):
         # Attacher le handler ici s'il n'est pas déjà dans le designer
         self.logout_link.set_event_handler('click', self.logout_link_click)
         if hasattr(self, 'profile_link'): 
-             # Attacher le handler ici s'il n'est pas déjà dans le designer
              self.profile_link.set_event_handler('click', self.profile_link_click)
-        # <<< Afficher/masquer lien admin >>>
-        # Assurez-vous d'avoir un lien nommé 'admin_link' dans le designer
+        # Afficher/masquer le lien admin basé sur self.is_admin
         if hasattr(self, 'admin_link'): 
             self.admin_link.visible = self.is_admin
             if self.is_admin:
-                 # Lier le handler au clic
-                 self.admin_link.set_event_handler('click', self.admin_link_click)
+                # Lier le handler au clic seulement si visible/admin
+                self.admin_link.set_event_handler('click', self.admin_link_click)
         
         # <<< Afficher indicateur panier et mettre à jour >>>
         if hasattr(self, 'cart_indicator_label'):
@@ -92,7 +88,8 @@ class MainForm(MainFormTemplate):
         if hasattr(self, 'logout_link'): self.logout_link.visible = False
         if hasattr(self, 'profile_link'): self.profile_link.visible = False
         if hasattr(self, 'welcome_label'): self.welcome_label.visible = False
-        if hasattr(self, 'admin_link'): self.admin_link.visible = False # Cacher si déconnecté
+        # S'assurer que le lien admin est caché si déconnecté ou non-admin
+        if hasattr(self, 'admin_link'): self.admin_link.visible = False 
         if hasattr(self, 'cart_indicator_label'): self.cart_indicator_label.visible = False
 
   def update_cart_indicator(self):
@@ -148,6 +145,7 @@ class MainForm(MainFormTemplate):
         self.content_panel.add_component(CartPage())
     else:
         # Rediriger vers landing si la page demandée n'est pas accessible
+        # Gérer explicitement le cas d'accès à admin par un non-admin
         if page_name == "admin" and not self.is_admin:
              print("Accès non autorisé au panneau admin. Redirection vers la page d'accueil.")
         elif page_name == "profile" and not self.user:
@@ -210,21 +208,18 @@ class MainForm(MainFormTemplate):
             Notification(f"Erreur lors de la déconnexion: {e}", style="danger").show()
 
   def profile_link_click(self, **event_args):
-    """Handles the click of the profile link."""
+    """Charge la page profil si l'utilisateur est connecté."""
     if self.user:
         self.load_page("profile")
 
   def admin_link_click(self, **event_args):
-    """Handles the click of the admin link."""
+    """Charge le panneau admin si l'utilisateur est admin."""
     if self.is_admin:
         self.load_page("admin")
 
   def cart_indicator_click(self, **event_args):
-      """Gère le clic sur l'indicateur du panier pour charger la page panier."""
-      if self.user:
-          print("Chargement page panier...")
-          # Charger la page panier
-          self.load_page("cart") 
-      # else: Ne rien faire si l'utilisateur n'est pas connecté (le lien ne devrait pas être visible)
+    """Charge la page panier si l'utilisateur est connecté."""
+    if self.user:
+      self.load_page("cart")
 
 

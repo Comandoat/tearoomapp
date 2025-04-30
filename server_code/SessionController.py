@@ -4,6 +4,26 @@ from anvil.tables import app_tables
 import anvil.server
 from .UsersController.crud import is_locked, verifier_mot_de_passe
 from datetime import datetime
+import functools # Ajout
+
+# Nouveau décorateur
+def admin_required(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        user_info = get_user_info() # Utilise la fonction existante pour récupérer l'ID
+        if not user_info:
+            raise anvil.server.PermissionDenied("Accès refusé: Utilisateur non connecté.")
+
+        # Récupérer l'utilisateur par son Row ID stocké en session
+        user = app_tables.users.get_by_id(user_info['user_row_id']) 
+        if not user or not user['is_admin']:
+            # Vous pouvez logguer la tentative d'accès si nécessaire
+            print(f"Tentative d'accès admin non autorisée par l'utilisateur ID: {user_info.get('user_row_id', 'Inconnu')} Email: {user_info.get('user_email', 'Inconnu')}")
+            raise anvil.server.PermissionDenied("Accès refusé: Privilèges administrateur requis.")
+
+        # Si l'utilisateur est admin, exécute la fonction originale
+        return func(*args, **kwargs)
+    return wrapper
 
 @anvil.server.callable
 def login_user(email, password):

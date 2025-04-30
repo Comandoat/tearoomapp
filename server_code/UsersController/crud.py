@@ -10,6 +10,8 @@ from zxcvbn import zxcvbn
 from argon2 import PasswordHasher, exceptions as argon_exceptions
 import secrets
 import string
+# Importer le décorateur depuis SessionController
+from ..SessionController import admin_required
 
 
 # This is a server package. It runs on the Anvil server,
@@ -369,140 +371,101 @@ def delete_my_account():
 # --- Fonctions Admin --- 
 
 # --- Helper function (non-callable directement par le client) ---
-def _is_caller_admin():
-    """Vérifie si l'utilisateur effectuant l'appel est un admin."""
-    print("DEBUG (_is_caller_admin): Entering function")
-    user_info = None
-    try:
-        print("DEBUG (_is_caller_admin): Calling get_user_info...")
-        # Appel à la fonction dans SessionController
-        user_info = anvil.server.call('get_user_info') 
-        print(f"DEBUG (_is_caller_admin): get_user_info returned: {user_info}")
-    except Exception as e_getinfo:
-        print(f"DEBUG (_is_caller_admin): ERROR calling get_user_info: {e_getinfo}")
-        # Si l'erreur se produit ici, la cause est probablement dans get_user_info ou l'appel lui-même
-        return False
-        
-    if not user_info or not user_info.get('user_row_id'):
-        print("DEBUG (_is_caller_admin): No user_info or user_row_id found in session.")
-        return False # Non connecté ou session invalide
-    
-    user_row_id = user_info['user_row_id']
-    print(f"DEBUG (_is_caller_admin): Found user_row_id: {user_row_id}")
-    admin_user = None
-    try:
-        print(f"DEBUG (_is_caller_admin): Getting user row by id: {user_row_id}")
-        admin_user = app_tables.users.get_by_id(user_row_id)
-        print(f"DEBUG (_is_caller_admin): User row fetched: {admin_user is not None}")
-    except Exception as e_getbyid:
-         print(f"DEBUG (_is_caller_admin): ERROR getting user by ID: {e_getbyid}")
-         return False
-         
-    # Vérifier que l'utilisateur existe, est admin et n'est pas explicitement inactif
-    if admin_user and admin_user['is_admin'] and admin_user['is_active'] is not False:
-        print(f"DEBUG (_is_caller_admin): User is admin and not explicitly inactive (is_active: {admin_user['is_active']}). Returning True.")
-        return True
-        
-    # Si une des conditions échoue
-    print(f"DEBUG (_is_caller_admin): Conditions check failed (admin_user: {admin_user is not None}, is_admin: {admin_user['is_admin'] if admin_user else 'N/A'}, is_active: {admin_user['is_active'] if admin_user else 'N/A'}). Returning False.")
-    return False
+# def _is_caller_admin():
+#     user_info = anvil.server.call('get_user_info')
+#     if not user_info:
+#         return False
+#     user = app_tables.users.get_by_id(user_info['user_row_id'])
+#     return user and user['is_admin']
 
 # --- Fonctions callable pour l'admin --- 
 
 @anvil.server.callable
-def is_current_user_admin():
-    """Fonction simple pour que le client vérifie le statut admin."""
-    print("DEBUG (is_current_user_admin): Callable function entered. Calling helper...")
-    result = _is_caller_admin()
-    print(f"DEBUG (is_current_user_admin): Helper returned {result}. Returning to client.")
-    return result
-
-@anvil.server.callable
+@admin_required # Sécuriser avec le décorateur
 def admin_get_all_users():
-    """Retourne une liste simplifiée de tous les utilisateurs pour l'admin."""
-    if not _is_caller_admin():
-        raise anvil.server.PermissionDenied("Accès réservé aux administrateurs.")
-        
-    user_list = []
-    # Itérer sur tous les utilisateurs
+    """[Admin] Récupère une liste simplifiée de tous les utilisateurs."""
+    # Retourner seulement les champs nécessaires pour la liste
+    # Exclure le mot de passe, 2FA secret, etc.
+    users_list = []
     for user in app_tables.users.search():
-        user_list.append({
+        users_list.append({
+            'row_id': user.get_id(), # Important pour les actions futures
             'email': user['email'],
+            'username': user['username'],
             'firstname': user['firstname'],
             'lastname': user['lastname'],
-            'username': user['username'],
             'is_admin': user['is_admin'],
-            # Gérer si la colonne is_active n'existe pas encore partout
-            'is_active': user.get('is_active', True) if user['email'] != f"deleted_{user.get_id()}@example.com" else False, 
-            'account_locked': user.get('account_locked', False),
-            'row_id': user.get_id() # Important pour les actions futures
+            'is_active': user['is_active'],
+            'account_locked': user['account_locked'],
+            'created_at': user['created_at']
         })
-    return user_list
+    return users_list
 
 @anvil.server.callable
+@admin_required # Sécuriser avec le décorateur
 def admin_get_user_details(user_row_id):
-    """Retourne toutes les données modifiables d'un utilisateur spécifique."""
-    if not _is_caller_admin():
-        raise anvil.server.PermissionDenied("Accès réservé aux administrateurs.")
-        
+    """[Admin] Récupère les détails complets (sauf sensibles) d'un utilisateur spécifique."""
     user = app_tables.users.get_by_id(user_row_id)
     if not user:
-        return None # Ou lever une erreur: raise ValueError("Utilisateur non trouvé")
-        
-    # Retourner toutes les colonnes pertinentes (sauf le hash du mot de passe)
-    user_details = dict(user) 
-    user_details.pop('password', None) # Exclure le mot de passe
-    user_details['row_id'] = user.get_id() # Ajouter row_id pour référence facile
-    return user_details
-    
+        return None # Ou lever une erreur
+    # Exclure les champs très sensibles
+    sensitive_keys = ['password', 'two_factor_secret', 'recovery_codes']
+    details = {k: v for k, v in user.items() if k not in sensitive_keys}
+    details['row_id'] = user.get_id() # S'assurer que l'ID est inclus
+    return details
+
 @anvil.server.callable
+@admin_required # Sécuriser avec le décorateur
 def admin_update_user(user_row_id, update_data):
-    """Met à jour les données d'un utilisateur spécifié par l'admin."""
-    if not _is_caller_admin():
-        raise anvil.server.PermissionDenied("Accès réservé aux administrateurs.")
+    """[Admin] Met à jour les informations d'un utilisateur spécifique."""
+    user = app_tables.users.get_by_id(user_row_id)
+    if not user:
+        return "Erreur : Utilisateur non trouvé."
 
-    user_to_update = app_tables.users.get_by_id(user_row_id)
-    if not user_to_update:
-        return f"Erreur : Utilisateur avec ID {user_row_id} non trouvé."
-
-    # --- Validation et Nettoyage des Données Reçues --- 
-    validated_data = {}
-    allowed_fields = ['firstname', 'lastname', 'email', 'phone_number', 'username', 
-                      'is_admin', 'is_active', 'account_locked'] 
+    # Valider les données reçues (important !)
+    allowed_fields = ['firstname', 'lastname', 'username', 'phone_number',
+                      'is_admin', 'is_active', 'notes', 'flag', 'account_locked'] 
+    # Attention : Ne pas permettre la modification de l'email ici facilement
+    # Ne JAMAIS permettre de modifier le mot de passe directement ici
     
-    current_admin_info = anvil.server.call('get_user_info')
-    current_admin_row_id = current_admin_info.get('user_row_id') if current_admin_info else None
-
-    for field in allowed_fields:
-        if field in update_data:
-            value = update_data[field]
+    update_dict = {}
+    for key, value in update_data.items():
+        if key in allowed_fields:
+            # Ajouter des validations spécifiques si nécessaire (ex: format username)
+            update_dict[key] = value
+        else:
+            print(f"Avertissement (admin_update_user): Tentative de modification du champ non autorisé '{key}' pour l'utilisateur ID {user_row_id}")
             
-            # Validation spécifique
-            if field == 'email':
-                if not re.match(EMAIL_REGEX, value):
-                    return "Erreur : Format d'email invalide."
-                if value != user_to_update['email'] and app_tables.users.get(email=value):
-                    return "Erreur : Cette adresse email est déjà utilisée."
-            elif field == 'phone_number':
-                 if value and not re.match(PHONE_REGEX, value): 
-                     return "Erreur : Format de téléphone invalide."
-            elif field in ['is_admin', 'is_active', 'account_locked']:
-                 if not isinstance(value, bool):
-                     return f"Erreur : Le champ {field} doit être un booléen (True/False)."
-                 if field == 'is_admin' and user_row_id == current_admin_row_id and not value:
-                     return "Erreur : Un administrateur ne peut pas se retirer ses propres droits."
-                     
-            validated_data[field] = value
-
-    if not validated_data:
-        return "Erreur : Aucune donnée valide fournie pour la mise à jour."
-
-    validated_data['updated_at'] = datetime.now()
-
-    # --- Mise à jour ---
+    if not update_dict:
+        return "Aucune donnée valide à mettre à jour."
+        
     try:
-        user_to_update.update(**validated_data)
+        update_dict['updated_at'] = datetime.now()
+        user.update(**update_dict)
         return "Utilisateur mis à jour avec succès."
     except Exception as e:
-        print(f"Erreur admin lors de la mise à jour de user {user_row_id}: {e}")
-        return "Erreur interne lors de la mise à jour de l'utilisateur."
+        # Gérer les erreurs potentielles (ex: username déjà pris)
+        print(f"Erreur lors de la mise à jour de l'utilisateur ID {user_row_id}: {e}")
+        # Renvoyer un message d'erreur plus spécifique si possible
+        if 'Constraint' in str(e) and 'username' in str(e):
+             return "Erreur : Ce nom d'utilisateur est déjà pris."
+        return f"Erreur interne lors de la mise à jour : {e}"
+
+# Nouvelle fonction pour désactiver un utilisateur
+@anvil.server.callable
+@admin_required
+def admin_deactivate_user(user_row_id):
+  """[Admin] Désactive (ou réactive) un compte utilisateur."""
+  user = app_tables.users.get_by_id(user_row_id)
+  if not user:
+    return "Erreur: Utilisateur non trouvé."
+
+  try:
+    # Basculer l'état d'activation
+    new_status = not user['is_active'] 
+    user.update(is_active=new_status, updated_at=datetime.now())
+    status_text = "désactivé" if not new_status else "réactivé"
+    return f"Utilisateur {user['email']} {status_text} avec succès."
+  except Exception as e:
+    print(f"Erreur lors de la désactivation/réactivation de l'utilisateur ID {user_row_id}: {e}")
+    return "Erreur interne lors de la modification du statut de l'utilisateur."
