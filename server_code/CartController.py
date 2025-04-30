@@ -257,4 +257,83 @@ def get_cart_item_count():
                  count += int(quantity)
              except (ValueError, TypeError): pass # Ignorer quantités invalides
     return count
+
+# --- Nouvelle fonction pour obtenir les détails complets du panier ---
+@anvil.server.callable
+def get_cart_details():
+    """Retourne une liste détaillée des articles dans le panier et le total."""
+    user_info = get_user_info()
+    if not user_info or not user_info.get('user_row_id'):
+        # Retourner un panier vide si non connecté
+        return {'items': [], 'total_amount': 0.0}
+        
+    user_row_id = user_info['user_row_id']
+    cart = _get_user_cart(user_row_id)
+    detailed_items = []
+    total_amount = 0.0
+    
+    if cart and isinstance(cart['content'], dict):
+        current_content = cart['content']
+        items_to_remove = [] # Pour les produits devenus indisponibles
+        
+        for product_key, quantity in current_content.items():
+            try:
+                item_quantity = int(quantity)
+                if item_quantity <= 0: continue # Ignorer quantité invalide
+                
+                product_type, product_id = product_key.split(':', 1)
+                product = None
+                
+                if product_type == 'tea':
+                    product = app_tables.teas.get_by_id(product_id)
+                elif product_type == 'goodie':
+                    product = app_tables.goodies.get_by_id(product_id)
+                
+                if product and product['is_available']:
+                    item_details = {
+                        'product_key': product_key,
+                        'name': product['name'],
+                        'quantity': item_quantity,
+                        'price': product['price'],
+                        'image': product['image'], # Passer l'objet Media
+                        'line_total': round(product['price'] * item_quantity, 2)
+                    }
+                    detailed_items.append(item_details)
+                    total_amount += item_details['line_total']
+                else:
+                    # Si produit non trouvé ou plus dispo, marquer pour suppression du panier
+                    print(f"Product {product_key} not found or unavailable. Marking for removal from cart.")
+                    items_to_remove.append(product_key)
+                    
+            except (ValueError, TypeError, KeyError) as e:
+                print(f"Error processing cart item {product_key}: {e}. Skipping.")
+                items_to_remove.append(product_key) # Marquer pour suppression en cas d'erreur
+
+        # Supprimer les articles invalides/indisponibles du panier en BDD
+        if items_to_remove:
+            print(f"Removing items from cart {user_row_id}: {items_to_remove}")
+            content_changed = False
+            for key_to_remove in items_to_remove:
+                if key_to_remove in current_content:
+                    del current_content[key_to_remove]
+                    content_changed = True
+            if content_changed:
+                # Recalculer le total après suppression
+                total_amount = _calculate_cart_total(current_content)
+                cart.update(content=current_content, total_amount=total_amount, update_at=datetime.now())
+            else: # Recalculer au cas où le total initial était faux
+                 total_amount = _calculate_cart_total(current_content)
+        else: 
+            # S'assurer que le total est correct même si rien n'est supprimé
+            total_amount = _calculate_cart_total(current_content)
+
+        # Mettre à jour le total en BDD si nécessaire
+        # Arrondir ici aussi pour éviter les problèmes de flottants
+        total_amount = round(total_amount, 2)
+        if cart['total_amount'] != total_amount:
+             print(f"Correcting cart total for user {user_row_id} from {cart['total_amount']} to {total_amount}")
+             cart.update(total_amount=total_amount, update_at=datetime.now())
+             
+    # Retourner la liste des items valides et le total final
+    return {'items': detailed_items, 'total_amount': total_amount}
   
