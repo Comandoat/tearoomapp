@@ -1,6 +1,7 @@
 components:
 - components:
-  - layout_properties: {col_xs: 0, row: UJYNIB, width_xs: 2}
+  - data_bindings: []
+    layout_properties: {col_xs: 0, row: UJYNIB, width_xs: 2}
     name: email_label
     properties: {}
     type: Label

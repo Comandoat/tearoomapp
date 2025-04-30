@@ -1,0 +1,23 @@
+components:
+- layout_properties: {grid_position: 'BUWXAI,MIHSFS'}
+  name: label_1
+  properties: {align: center, bold: true, text: Your Cart}
+  type: Label
+- layout_properties: {grid_position: 'QCFXKN,RZEGOA'}
+  name: cart_items_panel
+  properties: {item_template: Pages.Session.CartPage.ItemTemplate5}
+  type: RepeatingPanel
+- layout_properties: {grid_position: 'KNJWYW,GAWNZJ'}
+  name: total_label
+  properties: {text: 'Total : 0.00 €'}
+  type: Label
+- layout_properties: {grid_position: 'AYEYXQ,DYTGWP'}
+  name: clear_cart_button
+  properties: {text: Clear Cart}
+  type: Button
+- layout_properties: {grid_position: 'AYEYXQ,NWUXSK'}
+  name: checkout_button
+  properties: {text: Checkout}
+  type: Button
+container: {type: ColumnPanel}
+is_package: true

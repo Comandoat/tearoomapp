@@ -169,13 +169,13 @@ def add_user(firstname, lastname, email, phone_number, username, password, passw
         email=email,
         phone_number=phone_number,
         username=username,
-        password=password_hash, 
-        photo=profile_picture, 
+                password=password_hash, 
+                photo=profile_picture, 
         created_at=now,
         updated_at=now,
         account_locked=False,
-        is_admin=False,
-        email_verified=False 
+                is_admin=False,
+                email_verified=False 
     )
     return "Compte créé avec succès ! Veuillez vérifier votre email."
   except Exception as e:

@@ -1,0 +1,40 @@
+components:
+- components: []
+  layout_properties: {grid_position: 'JCKYVM,AWRBZO'}
+  name: flow_panel_2
+  properties: {}
+  type: FlowPanel
+- components:
+  - layout_properties: {grid_position: 'LECWQN,ZZGMKM PWCNNH,QRWAPK'}
+    name: item_name_label
+    properties: {}
+    type: Label
+  - layout_properties: {grid_position: 'LECWQN,ZZGMKM MLRWRM,JPEEVA'}
+    name: item_image
+    properties: {height: 236.83999633789062}
+    type: Image
+  - layout_properties: {grid_position: 'LECWQN,YAYZHQ AVFHKM,VSLDAD'}
+    name: item_price_label
+    properties: {}
+    type: Label
+  - data_bindings: []
+    layout_properties: {grid_position: 'LECWQN,YAYZHQ AVFHKM,UMQUHX'}
+    name: quantity_box
+    properties:
+      margin: [null, '100', null, '0']
+      type: number
+    type: TextBox
+  - layout_properties: {grid_position: 'LECWQN,YAYZHQ EYVIOH,JYYMHB'}
+    name: line_total_label
+    properties: {}
+    type: Label
+  - layout_properties: {grid_position: 'LECWQN,YAYZHQ EUNJGD,BIAEKF'}
+    name: remove_button
+    properties: {text: 🚮Remove}
+    type: Button
+  layout_properties: {grid_position: 'MBRTXH,ECTGKG'}
+  name: column_panel_1
+  properties: {}
+  type: ColumnPanel
+container: {type: ColumnPanel}
+is_package: true

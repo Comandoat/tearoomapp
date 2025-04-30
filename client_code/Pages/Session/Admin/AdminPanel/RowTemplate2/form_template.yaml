@@ -1,3 +1,38 @@
-components: []
-container: {type: DataRowPanel}
+components:
+- components:
+  - layout_properties: {col_xs: 0, row: UJYNIB, width_xs: 2}
+    name: email_label
+    properties: {}
+    type: Label
+  - layout_properties: {col_xs: 1, row: UJYNIB, width_xs: 2}
+    name: firstname_label
+    properties: {text: ''}
+    type: Label
+  - layout_properties: {col_xs: 4, row: UJYNIB, width_xs: 2}
+    name: lastname_label
+    properties: {text: ''}
+    type: Label
+  - layout_properties: {col_xs: 4, row: UJYNIB, width_xs: 2}
+    name: username_label
+    properties: {}
+    type: Label
+  - layout_properties: {col_xs: 8, row: UJYNIB, width_xs: 2}
+    name: is_active_label
+    properties: {}
+    type: Label
+  - layout_properties: {col_xs: 10, row: UJYNIB, width_xs: 1}
+    name: is_admin_label
+    properties: {}
+    type: Label
+  - layout_properties: {col_xs: 11, row: UJYNIB, width_xs: 1}
+    name: account_locked_label
+    properties: {}
+    type: Label
+  layout_properties: {}
+  name: UserRowTemplate
+  properties: {}
+  type: GridPanel
+container:
+  properties: {align: left}
+  type: DataRowPanel
 is_package: true

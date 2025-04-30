@@ -2,7 +2,6 @@ unique_ids:
   assets:
     inside-tearoom.webp: '1744392960416151551265715.09482'
     logo-tearoom-simple-logo.png: '1744421587833245233619057.43045'
-    new_file.html: '174591137248733062002127.88468'
     standard-page.html: SG6LKCNPKQWPENXELRXGSTERZATTZV7C
     theme.css: QHI2YLUSGEYXHQGWNNYYHVMEO7JVBGHH
   forms:
@@ -28,6 +27,9 @@ unique_ids:
     Pages.Session.Admin.AdminPanel.UserRowTemplate: '1745969268204977509596257.0432'
     Pages.Session.Admin.ListClients: '1744396206571535253353316.29486'
     Pages.Session.Admin.ListProducts: '1744396183212130869674095.23087'
+    Pages.Session.CartPage: '1745978213624585099730009.8547'
+    Pages.Session.CartPage.CartItemTemplate: '1745977310032459254123297.04694'
+    Pages.Session.CartPage.ItemTemplate5: '1745978350825282283425225.8343'
     Pages.Session.Customer.Bookings: '1744551513482605399906947.8003'
     Pages.Session.Customer.Cart: '1744395927988337302771335.7637'
     Pages.Session.Customer.Cart.ItemTemplate1: '1744492524126484928362194.5227'

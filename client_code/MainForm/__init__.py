@@ -17,6 +17,7 @@ from ..Pages.NoSession.Auth.SignUpForm import SignUpForm
 from ..Pages.NoSession.Auth.LogInForm import LogInForm
 from ..Pages.Session.Profile import Profile
 from ..Pages.Session.Admin.AdminPanel import AdminPanel
+# from ..Pages.Session.CartPage import CartPage # Décommentez/ajoutez si pas déjà fait
 
 class MainForm(MainFormTemplate):
   def __init__(self, **properties):
@@ -141,6 +142,10 @@ class MainForm(MainFormTemplate):
              self.load_page("login") 
     elif page_name == "admin" and self.is_admin: # Vérifier si admin ici aussi
         self.content_panel.add_component(AdminPanel())
+    elif page_name == "cart" and self.user:
+        # Importer ici si vous préférez les imports locaux
+        from ..Pages.Session.CartPage import CartPage 
+        self.content_panel.add_component(CartPage())
     else:
         # Rediriger vers landing si la page demandée n'est pas accessible
         if page_name == "admin" and not self.is_admin:
@@ -149,6 +154,10 @@ class MainForm(MainFormTemplate):
              print("Accès non autorisé au profil. Redirection vers login.")
              self.load_page("login") # Rediriger vers login si profil demandé sans être connecté
              return # Eviter de charger Landing en plus
+        elif page_name == "cart" and not self.user:
+             print("Accès non autorisé au panier. Redirection vers login.")
+             self.load_page("login") 
+             return
         else:
              print(f"Tentative de chargement de page '{page_name}' inconnue. Redirection vers la page d'accueil.")
         self.content_panel.add_component(Landing()) # Fallback sur landing
@@ -214,8 +223,8 @@ class MainForm(MainFormTemplate):
       """Gère le clic sur l'indicateur du panier pour charger la page panier."""
       if self.user:
           print("Chargement page panier...")
-          # Décommentez ceci lorsque CartPage.py existe
-          # self.load_page("cart") 
-          pass # Ne rien faire tant que la page n'existe pas
+          # Charger la page panier
+          self.load_page("cart") 
+      # else: Ne rien faire si l'utilisateur n'est pas connecté (le lien ne devrait pas être visible)
 
 
